@@ -1,6 +1,6 @@
 import React from 'react';
-import PrimaryButton from '../components/buttons/PrimaryButton';
-import SecondaryButton from '../components/buttons/SecondaryButton';
+import CancelButton from '../components/buttons/CancelButton';
+import SendButton from '../components/buttons/SendButton';
 import '../styles/ContactForm.css';
 
 const ContactForm = () => {
@@ -16,8 +16,8 @@ const ContactForm = () => {
                 </form>
 
                 <div className='form-buttons'>
-                    <PrimaryButton>Enviar</PrimaryButton>
-                    <SecondaryButton>Cancelar</SecondaryButton>
+                    <SendButton texto = "Enviar" />
+                    <CancelButton texto = "Cancelar" />
                 </div>
             </section>
         </div>
