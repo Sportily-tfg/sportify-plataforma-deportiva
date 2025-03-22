@@ -76,6 +76,6 @@ const NavLink = styled(Link)`
   white-space: nowrap;
 
   &:hover {
-    color: #47C7FC;
+    color: #FF8000;
   }
 `;
