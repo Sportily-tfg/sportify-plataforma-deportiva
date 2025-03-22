@@ -1,4 +1,5 @@
 import React from 'react';
+import Navbar from '../components/navbar/Navbar';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import SecondaryButton from '../components/buttons/SecondaryButton';
 import '../styles/HomePage.css';
@@ -6,6 +7,7 @@ import '../styles/HomePage.css';
 const HomePage = () => {
     return (
         <div className='home-page'>
+            <Navbar/>
             <section className='hero-section'>
 
                 <h1 className='hero-title'>Sportify</h1>
