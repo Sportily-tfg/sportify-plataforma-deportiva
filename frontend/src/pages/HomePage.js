@@ -11,10 +11,10 @@ const HomePage = () => {
             <section className='hero-section'>
 
                 <h1 className='hero-title'>Sportify</h1>
-
+                <h2 className='slogan'>Reserva, Entrena, Gana.</h2>
                 <div className='hero-buttons'>
-                    <PrimaryButton texto="Registrarse / Iniciar Sesión" />
-                    <SecondaryButton texto="Explorar actividades"/>
+                    <PrimaryButton texto="Acceder" />
+                    <SecondaryButton texto="Explorar" />
                 </div>
             </section>
         </div>
