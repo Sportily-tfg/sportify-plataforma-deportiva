@@ -1,47 +1,88 @@
 .contact-page {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #FAFAFA; /* Fondo general */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .contact-page h1 {
-    color: #263238; /* Títulos y texto principal */
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #607D8B; /* Texto secundario */
-    font-weight: bold;
-  }
-  
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #607D8B; /* Texto secundario */
-    border-radius: 4px;
-    font-size: 16px;
-    color: #263238; /* Texto principal */
-    background-color: #FFFFFF; /* Fondo blanco para los inputs */
-  }
-  
-  .form-group textarea {
-    resize: vertical;
-    min-height: 150px;
-  }
-  
-  .buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #fafafa;
+    padding: 20px;
+  }
+  
+  .form-container {
+    width: 100%;
+    max-width: 500px;
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    color: #333333;
+    margin: 0 auto;
+  }
+  
+  /* Estilos para el título */
+  .form-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #212121;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  
+  /* Estilos para el subtítulo */
+  .form-subtitle {
+    font-size: 14px;
+    color: #555555;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  .form-container .form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .form-container .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .form-container .form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555555;
+    text-align: left;
+  }
+  
+  .form-container .form-group input,
+  .form-container .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+  }
+  
+  .form-container .form-group input:focus,
+  .form-container .form-group textarea:focus {
+    outline: none;
+    border-color: #47C7FC;
+    background-color: #ffffff;
+  }
+  
+  .form-container .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  .form-container .form-submit {
+    display: flex;
+    justify-content: center;
     margin-top: 20px;
   }

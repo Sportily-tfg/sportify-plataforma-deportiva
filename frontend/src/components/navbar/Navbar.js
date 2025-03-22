@@ -1,78 +1,81 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Importamos Link para la navegación
-import styled from 'styled-components'; // Importamos styled-components
-
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import logo from '../../assets/Logo-Primary-on-Transparent.png';
 
 const Navbar = () => {
-    const [scroll, setScroll] = useState(false);
-  
-    useEffect(() => {
-      const handleScroll = () => {
-        if (window.scrollY > 50) {
-          setScroll(true);
-        } else {
-          setScroll(false);
-        }
-      };
-  
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-  
-    return (
-      <Nav scroll={scroll}>
-        <NavList>
-          <NavItem>
-            <NavLink to="/">Inicio</NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/contacto">Contacto</NavLink>
-          </NavItem>
-        </NavList>
-      </Nav>
-    );
-  };
-  
-  export default Navbar;
+  const [scroll, setScroll] = useState(false);
 
-// Estilos para el Navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      setScroll(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <Nav scroll={scroll}>
+      <Logo src={logo} alt="Logo de la aplicación" />
+      <NavList>
+        <NavItem>
+          <NavLink to="/">Inicio</NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink to="/contacto">Contacto</NavLink>
+        </NavItem>
+      </NavList>
+    </Nav>
+  );
+};
+
+export default Navbar;
+
+// Estilos principales del Navbar
 const Nav = styled.nav`
-  background-color: #212121; /* Fondo oscuro */
-  padding: 1rem 5%; /* Usamos porcentaje para el padding horizontal */
+  background-color: #212121;
+  padding: 1rem 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: fixed; /* Fija el Navbar en la parte superior */
-  top: 0; /* Lo coloca en la parte superior */
-  left: 0; /* Lo coloca a la izquierda */
-  width: 100%; /* Ocupa todo el ancho de la pantalla */
-  z-index: 1000; /* Asegura que esté por encima de otros elementos */
-  opacity: ${({ scroll }) => (scroll ? '0.7' : '1')}; /* Cambia la opacidad al hacer scroll */
-  transition: opacity 0.3s ease; /* Añade una transición suave */
-  overflow: visible; /* Asegura que el contenido no se corte */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  opacity: ${({ scroll }) => (scroll ? '0.7' : '1')};
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
 `;
 
+// Estilos del logo
+const Logo = styled.img`
+  height: 70px;
+  margin-right: 20px;
+`;
+
+// Estilos de la lista de enlaces
 const NavList = styled.ul`
   list-style: none;
   display: flex;
-  justify-content: flex-end; /* Alinea los elementos a la derecha */
   margin: 0;
   padding: 0;
-  max-width: 85vw; /* Usamos un porcentaje del ancho de la ventana */
-  width: 90%; /* Usamos un porcentaje para el ancho */
-  margin: 0 auto; /* Centra el contenido */
+  gap: 1.5rem;
 `;
 
-const NavItem = styled.li`
-  margin-left: 1.5rem; /* Usamos rem para el margen */
-`;
+// Estilos de cada elemento de la lista
+const NavItem = styled.li``;
 
+// Estilos de los enlaces
 const NavLink = styled(Link)`
-  color: #FAFAFA; /* Texto claro */
+  color: #FAFAFA;
   text-decoration: none;
-  font-size: 1.1rem; /* Usamos rem para el tamaño de la fuente */
-  font-family: 'Arial', sans-serif; /* Define la fuente */
+  font-size: 1.1rem;
+  font-family: 'Arial', sans-serif;
   transition: color 0.3s ease;
+  white-space: nowrap;
 
   &:hover {
-    color: #47C7FC; /* Color de enlace al hacer hover */
+    color: #47C7FC;
   }
 `;
