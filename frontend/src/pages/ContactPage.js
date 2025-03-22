@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import SendButton from '../components/buttons/SendButton';
-import CancelButton from '../components/buttons/CancelButton';
+import PrimaryButton from '../components/buttons/PrimaryButton';
+import SecondaryButton from '../components/buttons/SecondaryButton';
 import Navbar from '../components/navbar/Navbar';
 import '../styles/ContactPage.css';
 
@@ -71,8 +71,8 @@ const ContactPage = () => {
           />
         </div>
         <div className="buttons">
-          <SendButton texto="Enviar" />
-          <CancelButton texto="Cancelar" onClick={handleCancel} />
+          <PrimaryButton texto="Enviar" />
+          <SecondaryButton texto="Cancelar" onClick={handleCancel} />
         </div>
       </form>
     </div>
