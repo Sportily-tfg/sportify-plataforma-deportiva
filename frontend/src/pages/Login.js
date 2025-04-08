@@ -10,7 +10,7 @@ const Login = () => {
             <Navbar />
             <section className="login-section">
                 <h1 className="login-title">Sportify</h1>
-                <h2 className="login-slogan">Inicia sesión para empezar</h2>
+                <h2 className="login-slogan">Login</h2>
 
                 <div className="login-inputs">
                     <input type="email" placeholder="Correo electrónico" className="login-input"/>
@@ -18,7 +18,7 @@ const Login = () => {
                 </div>
 
                 <div className="login-buttons">
-                    <PrimaryButton texto="Entrar" />
+                    <PrimaryButton texto="Entrar"/>
                     <SecondaryButton texto="Resgistro" />
                 </div>
             </section>

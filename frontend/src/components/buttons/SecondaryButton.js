@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Button = ({ texto }) => {
+const Button = ({ texto, onClick }) => {
   return (
     <StyledWrapper>
-      <button className="button">
+      <button className="button" onClick={onClick}>
         <span className="actual-text">&nbsp;{texto}&nbsp;</span>
         <span aria-hidden="true" className="hover-text">&nbsp;{texto}&nbsp;</span>
       </button>
