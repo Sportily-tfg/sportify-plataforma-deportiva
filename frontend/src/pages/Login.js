@@ -20,8 +20,8 @@ const Login = () => {
                 </div>
 
                 <div className="login-buttons">
-                    <PrimaryButton texto="Entrar" />
-                    <SecondaryButton texto="Resgistro" onClick={() => navigate('/register')} />
+                    <PrimaryButton texto="Entrar"  lightText={true}/>
+                    <SecondaryButton texto="Resgistro" onClick={() => navigate('/register')} lightText={true} />
                 </div>
             </section>
         </div>

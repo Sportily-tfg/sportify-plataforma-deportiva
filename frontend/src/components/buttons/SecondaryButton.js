@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Button = ({ texto, onClick }) => {
+const Button = ({ texto, onClick, lightText = false }) => {
   return (
-    <StyledWrapper>
+    <StyledWrapper lightText={lightText}>
       <button className="button" onClick={onClick}>
         <span className="actual-text">&nbsp;{texto}&nbsp;</span>
         <span aria-hidden="true" className="hover-text">&nbsp;{texto}&nbsp;</span>
@@ -25,7 +25,7 @@ const StyledWrapper = styled.div`
   /* Estilos base del botón */
   .button {
     --border-right: 3px; /* Grosor del borde derecho */
-    --text-stroke-color: #000000; /* Color del borde del texto */
+    --text-stroke-color: ${props => props.lightText ? '#ffffff' : '#000000'}; /* Color del borde del texto */
     --animation-color: #47C7FC; /* Color de la animación */
     --fs-size: 1.2em; /* Tamaño de la fuente */
     letter-spacing: 2px; /* Espaciado entre letras */
@@ -34,7 +34,7 @@ const StyledWrapper = styled.div`
     font-family: "Arial";
     position: relative;
     text-transform: uppercase;
-    color: black;
+    color: ${props => props.lightText ? 'white' : 'black'};
     -webkit-text-stroke: 1px var(--text-stroke-color); /* Borde del texto */
   }
 

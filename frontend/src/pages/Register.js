@@ -23,8 +23,8 @@ const Register = () => {
                 </div>
 
                 <div className="login-buttons">
-                    <PrimaryButton texto="Registrarse" />
-                    <SecondaryButton texto="Iniciar sesión"  onClick={() => navigate('/login')}/>
+                    <PrimaryButton texto="Registrarse" lightText={true} />
+                    <SecondaryButton texto="Volver"  onClick={() => navigate('/login')} lightText={true} />
                 </div>
             </section>
         </div>
