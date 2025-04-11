@@ -5,6 +5,7 @@ import ContactPage from './pages/ContactPage';
 import Login from './pages/Login';
 import Register from './pages/Register'; 
 import ActividadesPanel from './pages/ActividadesPanel';
+import UserPanel from './pages/UserPanel';
 
 function App() {
   return (
@@ -25,6 +26,9 @@ function App() {
 
           {/* Ruta para el panel de actividades */}
           <Route path="/actividades" element={<ActividadesPanel />} />
+
+          {/* Ruta para el panel de usuario */}
+          <Route path="/usuario" element={<UserPanel />} />
         </Routes>
       </div>
     </Router>

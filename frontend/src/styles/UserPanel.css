@@ -1,0 +1,147 @@
+/* Estilos generales - Fondo oscuro como la web */
+.user-panel {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: 'Roboto', sans-serif;
+    color: #FAFAFA; /* Texto claro */
+    background-color: #121212; /* Fondo oscuro principal */
+    min-height: calc(100vh - 100px); /* Ajuste altura */
+  }
+  
+  /* Secciones - Tarjetas con bordes sutiles */
+  .profile-section,
+  .reservations-section,
+  .rewards-section {
+    background: #1e1e1e; /* Fondo tarjetas */
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    border: 1px solid #333; /* Borde sutil */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Títulos - Naranja Sportify */
+  .user-panel h2,
+  .user-panel h3 {
+    color: #FF8000; /* Naranja corporativo */
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  
+  .user-panel h2::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #FF8000;
+  }
+  
+  /* Avatar - Estilo moderno */
+  .avatar-placeholder {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #FF8000; /* Naranja */
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    border: 3px solid #3F51B5; /* Azul secundario */
+  }
+  
+  /* Textos - Jerarquía visual */
+  .user-info p,
+  .reservation-card p,
+  .reward-card p {
+    margin: 0.8rem 0;
+    line-height: 1.6;
+  }
+  
+  .user-info strong,
+  .reservation-card strong,
+  .reward-card strong {
+    color: #FF8000; /* Destaca etiquetas */
+  }
+  
+  /* Tarjetas - Efecto hover como actividades */
+  .reservation-card,
+  .reward-card {
+    background: #252525;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border-left: 4px solid #3F51B5; /* Azul */
+  }
+  
+  .reservation-card:hover,
+  .reward-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    border-left-color: #FF8000; /* Naranja al hover */
+  }
+  
+  /* Botones - Coherencia con tu sistema */
+  .button-group {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .edit-btn,
+  .logout-btn,
+  .redeem-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .edit-btn {
+    background: #FF8000; /* Naranja */
+    color: white;
+  }
+  
+  .logout-btn {
+    background: transparent;
+    color: #FF8000;
+    border: 1px solid #FF8000;
+  }
+  
+  .redeem-btn {
+    background: #3F51B5; /* Azul */
+    color: white;
+  }
+  
+  /* Efectos hover */
+  .edit-btn:hover {
+    background: #E65100; /* Naranja oscuro */
+  }
+  
+  .logout-btn:hover {
+    background: rgba(255, 128, 0, 0.1);
+  }
+  
+  .redeem-btn:hover {
+    background: #303F9F; /* Azul oscuro */
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .user-panel {
+      padding: 1rem;
+    }
+    
+    .button-group {
+      flex-direction: column;
+    }
+  }

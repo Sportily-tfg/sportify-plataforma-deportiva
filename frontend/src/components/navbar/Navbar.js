@@ -28,6 +28,9 @@ const Navbar = () => {
         <NavItem>
           <NavLink to="/actividades">Actividades</NavLink>
         </NavItem>
+        <NavItem>
+          <NavLink to="/usuario">Mi perfil</NavLink>
+        </NavItem>
       </NavList>
     </Nav>
   );
