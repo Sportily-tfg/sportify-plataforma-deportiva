@@ -25,6 +25,9 @@ const Navbar = () => {
         <NavItem>
           <NavLink to="/contacto">Contacto</NavLink>
         </NavItem>
+        <NavItem>
+          <NavLink to="/actividades">Actividades</NavLink>
+        </NavItem>
       </NavList>
     </Nav>
   );

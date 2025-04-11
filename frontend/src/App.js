@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import ContactPage from './pages/ContactPage';
 import Login from './pages/Login';
 import Register from './pages/Register'; 
+import ActividadesPanel from './pages/ActividadesPanel';
 
 function App() {
   return (
@@ -21,6 +22,9 @@ function App() {
           
           {/* Ruta para la página de registro */}
           <Route path="/register" element={<Register />} />
+
+          {/* Ruta para el panel de actividades */}
+          <Route path="/actividades" element={<ActividadesPanel />} />
         </Routes>
       </div>
     </Router>

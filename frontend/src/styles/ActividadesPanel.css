@@ -1,0 +1,138 @@
+.actividades-page {
+    min-height: 100vh;
+    background-color: #121212;
+    padding: 2rem;
+    padding-top: 100px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.actividades-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.actividades-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #ffffff;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.actividades-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(50%);
+    width: 100px;
+    height: 3px;
+    background: #FF8000;
+}
+
+.actividades-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+.actividad-card {
+    background-color: #1e1e1e;
+    padding: 1.8rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid #333;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.actividad-nombre {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.actividad-descripcion {
+    color: #b0b0b0;
+    margin: 1rem 0;
+    line-height: 1.5;
+    min-height: 60px;
+}
+
+.actividad-info {
+    font-size: 0.95rem;
+    color: #aaaaaa;
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.actividad-precio {
+    font-weight: bold;
+    margin: 0.5rem 0;
+    color: #4CAF50;
+    font-size: 1.2rem;
+}
+
+.actividad-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-color: #FF8000;
+}
+
+/* RESPONSIVE PARA MOVIL */
+@media (max-width: 768px) {
+    .actividades-page {
+        padding-top: 80px;
+        padding: 1rem;
+    }
+    
+    .actividades-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .actividad-card {
+        padding: 1.5rem;
+    }
+}
+
+/* Añade al final del archivo */
+.actividad-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Estilo para el botón secundario */
+.secondary-button {
+    background-color: transparent;
+    color: #FF8000;
+    border: 1px solid #FF8000;
+    padding: 0.8rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.secondary-button:hover {
+    background-color: rgba(255, 128, 0, 0.1);
+}
+
+/* Animación para el lightbox */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.lightbox-overlay {
+    animation: fadeIn 0.3s ease-out;
+}
+
