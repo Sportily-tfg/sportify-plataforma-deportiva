@@ -99,12 +99,12 @@ const UsersManagement = () => {
         </div>
 
         <div className="form-buttons">
-          <PrimaryButton 
-            texto={isEditing ? 'Guardar Cambios' : 'Crear Usuario'} 
+          <PrimaryButton lightText={true}
+            texto={isEditing ? 'Guardar' : 'Crear Usuario'} 
             type="submit" 
           />
           {isEditing && (
-            <SecondaryButton 
+            <SecondaryButton lightText={true}
               texto="Cancelar" 
               onClick={() => {
                 setIsEditing(null);
@@ -130,14 +130,13 @@ const UsersManagement = () => {
                 <p><strong>Miembro desde:</strong> {user.joinDate}</p>
               </div>
               <div className="item-actions">
-                <SecondaryButton 
+                <SecondaryButton lightText={true}
                   texto="Editar" 
                   onClick={() => handleEdit(user)} 
                 />
                 <SecondaryButton 
-                  texto="Eliminar" 
-                  onClick={() => handleDelete(user.id)} 
-                  lightText 
+                  texto="Eliminar" lightText={true}
+                  onClick={() => handleDelete(user.id)}  
                 />
               </div>
             </div>
