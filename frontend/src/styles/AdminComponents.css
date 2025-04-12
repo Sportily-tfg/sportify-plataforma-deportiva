@@ -1,0 +1,69 @@
+.management-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .admin-form {
+    background: #1e1e1e;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #FF8000;
+  }
+  
+  .form-group input, 
+  .form-group select {
+    width: 100%;
+    padding: 10px;
+    background: #252525;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #FAFAFA;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .form-row .form-group {
+    flex: 1;
+  }
+  
+  .form-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .items-list {
+    margin-top: 2rem;
+  }
+  
+  .item-card {
+    background: #1e1e1e;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .item-info {
+    flex: 1;
+  }
+  
+  .item-actions {
+    display: flex;
+    gap: 10px;
+  }

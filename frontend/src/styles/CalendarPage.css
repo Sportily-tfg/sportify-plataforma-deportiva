@@ -1,0 +1,78 @@
+/* src/styles/CalendarPage.css */
+.calendar-page {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    color: #FAFAFA;
+    background-color: #121212;
+  }
+  
+  .calendar-container {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .custom-calendar {
+    width: 500px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .custom-calendar .react-calendar__navigation button {
+    color: #E0E0E0 !important; /* Gris claro */
+    background: none;
+    font-size: 1.2em;
+    min-width: 44px;
+  }
+
+  .custom-calendar .react-calendar__tile {
+    color: white;
+  }
+
+  .custom-calendar .react-calendar__navigation__label__labelText {
+    color: white;
+  }
+
+.custom-calendar .react-calendar__month-view__weekdays__weekday {
+  color: #FF8000; /* Naranja para los días de la semana */
+}
+
+  /* Estilos para días con actividades */
+  .has-activities {
+    background-color: #FF800033 !important; /* Naranja semitransparente */
+    border-radius: 50%;
+  }
+  
+  .activities-list {
+    flex: 1;
+    background: #1e1e1e;
+    padding: 1.5rem;
+    border-radius: 10px;
+  }
+  
+  .activity-card {
+    background: #252525;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #FF8000;
+  }
+  
+  .activity-card h3 {
+    color: #FF8000;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .calendar-container {
+      flex-direction: column;
+    }
+    
+    .custom-calendar {
+      width: 100%;
+    }
+  }

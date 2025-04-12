@@ -1,0 +1,41 @@
+.admin-panel {
+    display: flex;
+    min-height: 100vh;
+    background-color: #121212;
+    color: #FAFAFA;
+  }
+  
+  .admin-sidebar {
+    width: 250px;
+    background-color: #1e1e1e;
+    padding: 2rem;
+    border-right: 1px solid #333;
+  }
+  
+  .admin-content {
+    flex: 1;
+    padding: 2rem;
+  }
+  
+  .admin-nav-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #252525;
+    color: #FAFAFA;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s;
+  }
+  
+  .admin-nav-btn:hover {
+    background: #FF8000;
+  }
+  
+  .admin-nav-btn.active {
+    background: #FF8000;
+    font-weight: bold;
+  }

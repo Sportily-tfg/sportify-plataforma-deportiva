@@ -6,6 +6,8 @@ import Login from './pages/Login';
 import Register from './pages/Register'; 
 import ActividadesPanel from './pages/ActividadesPanel';
 import UserPanel from './pages/UserPanel';
+import CalendarPage from './pages/CalendarPage';
+import AdminPanel from './pages/Admin/AdminPanel';
 
 function App() {
   return (
@@ -29,6 +31,12 @@ function App() {
 
           {/* Ruta para el panel de usuario */}
           <Route path="/usuario" element={<UserPanel />} />
+
+          {/* Ruta para el calendario */}
+          <Route path="/calendar" element={<CalendarPage />} />
+
+          {/* Ruta para el panel de administrador */}
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </div>
     </Router>
