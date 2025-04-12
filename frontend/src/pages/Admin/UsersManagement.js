@@ -100,7 +100,7 @@ const UsersManagement = () => {
 
         <div className="form-buttons">
           <PrimaryButton lightText={true}
-            texto={isEditing ? 'Guardar' : 'Crear Usuario'} 
+            texto={isEditing ? 'Guardar' : 'Crear'} 
             type="submit" 
           />
           {isEditing && (
