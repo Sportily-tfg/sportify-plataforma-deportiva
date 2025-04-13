@@ -50,6 +50,8 @@ const StyledWrapper = styled.div`
     overflow: hidden;
     transition: 0.5s;
     -webkit-text-stroke: 1px var(--animation-color);
+    white-space: nowrap; /* Añade esta línea */
+    display: inline-block; /* Añade esta línea */
   }
 
   /* Efecto al hacer hover */

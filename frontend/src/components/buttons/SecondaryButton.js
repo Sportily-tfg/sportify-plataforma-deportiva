@@ -12,6 +12,7 @@ const Button = ({ texto, onClick, lightText = false }) => {
   );
 }
 
+// Estilos del botón (sin cambios)
 const StyledWrapper = styled.div`
   .button {
     margin: 0;
@@ -24,18 +25,18 @@ const StyledWrapper = styled.div`
 
   /* Estilos base del botón */
   .button {
-    --border-right: 3px; /* Grosor del borde derecho */
-    --text-stroke-color: ${props => props.lightText ? '#ffffff' : '#000000'}; /* Color del borde del texto */
-    --animation-color: #47C7FC; /* Color de la animación */
-    --fs-size: 1.2em; /* Tamaño de la fuente */
-    letter-spacing: 2px; /* Espaciado entre letras */
+    --border-right: 3px;
+    --text-stroke-color:${props => props.lightText ? '#ffffff' : '#000000'};
+    --animation-color: #47C7FC;
+    --fs-size: 1.2em;
+    letter-spacing: 2px;
     text-decoration: none;
     font-size: var(--fs-size);
     font-family: "Arial";
     position: relative;
     text-transform: uppercase;
     color: ${props => props.lightText ? 'white' : 'black'};
-    -webkit-text-stroke: 1px var(--text-stroke-color); /* Borde del texto */
+    -webkit-text-stroke: 1px var(--text-stroke-color);
   }
 
   /* Estilos del texto que se muestra al hacer hover */
@@ -49,6 +50,8 @@ const StyledWrapper = styled.div`
     overflow: hidden;
     transition: 0.5s;
     -webkit-text-stroke: 1px var(--animation-color);
+    white-space: nowrap; /* Añade esta línea */
+    display: inline-block; /* Añade esta línea */
   }
 
   /* Efecto al hacer hover */
@@ -59,3 +62,4 @@ const StyledWrapper = styled.div`
 `;
 
 export default Button;
+

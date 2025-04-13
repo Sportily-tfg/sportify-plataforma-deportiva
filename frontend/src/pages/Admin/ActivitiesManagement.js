@@ -92,7 +92,7 @@ const ActivitiesManagement = () => {
 
         <div className="form-buttons">
           <PrimaryButton lightText={true}
-            texto={isEditing ? 'Guardar' : 'Crear'} 
+            texto={isEditing ? 'Guardar' : 'Crear actividad'} 
             type="submit" 
           />
           {isEditing && (
