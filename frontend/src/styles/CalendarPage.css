@@ -22,7 +22,7 @@
   }
 
   .custom-calendar .react-calendar__navigation button {
-    color: #E0E0E0 !important; /* Gris claro */
+    color: #bbbbbb !important; /* Gris claro */
     background: none;
     font-size: 1.2em;
     min-width: 44px;
@@ -38,6 +38,24 @@
 
 .custom-calendar .react-calendar__month-view__weekdays__weekday {
   color: #FF8000; /* Naranja para los días de la semana */
+}
+
+.custom-calendar .react-calendar__tile--now {
+  background-color: #3F51B5 !important; /* Azul más intenso */
+  color: white !important;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.custom-calendar .react-calendar__tile:enabled:hover,
+.custom-calendar .react-calendar__tile:enabled:focus {
+    background-color: #424242 ; /* Gris oscuro */
+    color: white;
+}
+
+.custom-calendar .react-calendar__navigation button:enabled:hover,
+.custom-calendar .react-calendar__navigation button:enabled:focus {
+    background-color: #424242;
 }
 
   /* Estilos para días con actividades */

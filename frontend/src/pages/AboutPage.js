@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import PrimaryButton from '../components/buttons/PrimaryButton';
+import Navbar from '../components/navbar/Navbar';
 import { useNavigate } from 'react-router-dom';
 
 const AboutPage = () => {
@@ -8,6 +9,7 @@ const AboutPage = () => {
 
   return (
     <AboutContainer>
+        <Navbar />
       <ContentSection>
         <Title>¿Qué es Sportify?</Title>
         <Description>
@@ -53,7 +55,7 @@ const AboutPage = () => {
 
 // Estilos
 const AboutContainer = styled.div`
-  padding: 4rem 2rem;
+  padding: 7rem 2rem;
   background-color: #121212;
   color: #FAFAFA;
   min-height: 100vh;
