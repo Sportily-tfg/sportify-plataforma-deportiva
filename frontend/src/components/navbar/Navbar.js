@@ -99,7 +99,7 @@ const LeftSection = styled.div`
 const RightSection = styled.div`
   display: flex;
   align-items: center;
-  margin-right: 20px; /* Añade margen al contenedor derecho */
+  margin-right: 60px; /* Añade margen al contenedor derecho */
 `;
 
 const Logo = styled.img`

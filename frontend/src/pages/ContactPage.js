@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PrimaryButton from '../components/buttons/PrimaryButton'; // Importa tu SendButton
-import '../styles/ContactPage.css'; // Importa el archivo CSS
+import '../styles/Login.css'; // Importa el archivo CSS
 import Navbar from '../components/navbar/Navbar.js';
 
 const ContactPage = () => {
@@ -27,50 +27,53 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="contact-page">
+    <div className="login-page">
       <Navbar />
-      <div className="form-container">
+      <div className="login-section">
         {/* Título "Contáctanos" */}
-        <h1 className="form-title">Contáctanos</h1>
+        <h1 className="login-title">Contáctanos</h1>
         {/* Subtítulo o descripción */}
-        <p className="form-subtitle">
+        <p className="login-slogan">
           ¿Tienes alguna pregunta o comentario? ¡Estamos aquí para ayudarte!
         </p>
 
-        <form className="form" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           {/* Campo para Nombre y Apellidos */}
-          <div className="form-group">
-            <label htmlFor="name">Nombre y Apellidos</label>
+          <div className="login-inputs">
             <input
               required
+              placeholder='Nombre y apellidos'
               name="name"
               id="name"
               type="text"
+              className='login-input'
               value={formData.name}
               onChange={handleChange}
             />
           </div>
 
           {/* Campo para Correo Electrónico */}
-          <div className="form-group">
-            <label htmlFor="email">Correo Electrónico</label>
+          <div className="login-inputs">
             <input
               required
+              placeholder='Correo Electrónico'
               name="email"
               id="email"
               type="email"
+              className='login-input'
               value={formData.email}
               onChange={handleChange}
             />
           </div>
 
           {/* Campo para el Mensaje */}
-          <div className="form-group">
-            <label htmlFor="message">Mensaje</label>
+          <div className="login-inputs">
             <textarea
               required
+              placeholder='Mensaje'
               name="message"
               id="message"
+              className='login-input'
               cols={50}
               rows={10}
               value={formData.message}
@@ -79,8 +82,8 @@ const ContactPage = () => {
           </div>
 
           {/* Botón de Enviar */}
-          <div className="form-submit">
-            <PrimaryButton type="submit" texto="Enviar" />
+          <div style={{ marginTop: '1.5rem' }}>
+            <PrimaryButton type="submit" texto="Enviar" lightText={ true }/>
           </div>
         </form>
       </div>
