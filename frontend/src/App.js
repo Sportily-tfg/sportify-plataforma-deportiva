@@ -8,6 +8,7 @@ import ActividadesPanel from './pages/ActividadesPanel';
 import UserPanel from './pages/UserPanel';
 import CalendarPage from './pages/CalendarPage';
 import AdminPanel from './pages/Admin/AdminPanel';
+import AboutPage from './pages/AboutPage';
 
 function App() {
   return (
@@ -37,6 +38,9 @@ function App() {
 
           {/* Ruta para el panel de administrador */}
           <Route path="/admin" element={<AdminPanel />} />
+
+          {/* Ruta para la página Sobre Nosotros */}
+          <Route path="/about" element={<AboutPage />} />
         </Routes>
       </div>
     </Router>

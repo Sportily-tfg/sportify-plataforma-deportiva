@@ -17,7 +17,7 @@ const HomePage = () => {
                 <h2 className='slogan'>Reserva, Entrena, Gana.</h2>
                 <div className='hero-buttons'>
                     <PrimaryButton texto="Acceder" onClick={() => navigate('/login')} />
-                    <SecondaryButton texto="Explorar" onClick={() => navigate('/register')}/>
+                    <SecondaryButton texto="Explorar" onClick={() => navigate('/about')}/>
                 </div>
             </section>
         </div>
