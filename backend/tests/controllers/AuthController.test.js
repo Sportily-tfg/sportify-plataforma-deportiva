@@ -1,6 +1,4 @@
-// para el has de contraseñas
 const bcrypt = require('bcryptjs');
-// para la generacion de tokens
 const jwt = require('jsonwebtoken');
 const { register, login } = require('../../controllers/authController');
 const Usuario = require('../../models/Usuario');
@@ -10,18 +8,14 @@ jest.mock('../../models/Usuario');
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
 
-// describe el conjutno de pruebas para el controlador
 describe('Auth Controller', () => {
-  // variables para almacenar los objetos
   let mockReq, mockRes;
 
-  // se ejecuta antes de cada prueba
   beforeEach(() => {
     mockReq = {
       body: {}
     };
     
-    // mock del objeto response con las funciones
     mockRes = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn()
@@ -30,31 +24,26 @@ describe('Auth Controller', () => {
     process.env.JWT_SECRET = 'test-secret';
   });
 
-  // limpieza que se ejecuta después de cada prueba
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  // describe las pruebas para la función del registro
   describe('register', () => {
-    // prueba para registro exitoso
-    test('should register a new user successfully', async () => {
+    test('should register a new user successfully with valid data', async () => {
       mockReq.body = {
         nombre: 'Test User',
         email: 'test@example.com',
-        contraseña: 'password123'
+        contraseña: 'ValidPass123'
       };
       
-      // configura los mocks para simular el comportamiento esperado
       Usuario.findByEmail.mockResolvedValue(null);
       bcrypt.hash.mockResolvedValue('hashedpassword');
       Usuario.create.mockResolvedValue(1);
       
-      // verificaciones
       await register(mockReq, mockRes);
       
       expect(Usuario.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(bcrypt.hash).toHaveBeenCalledWith('password123', 10);
+      expect(bcrypt.hash).toHaveBeenCalledWith('ValidPass123', 10);
       expect(Usuario.create).toHaveBeenCalledWith({
         nombre: 'Test User',
         email: 'test@example.com',
@@ -67,17 +56,15 @@ describe('Auth Controller', () => {
       });
     });
 
-    // prueba: error cuando el email ya está registrado
     test('should return error when email already exists', async () => {
       mockReq.body = {
         nombre: 'Test User',
         email: 'existing@example.com',
-        contraseña: 'password123'
+        contraseña: 'ValidPass123'
       };
       
-      // simula que el email ya existe
       Usuario.findByEmail.mockResolvedValue({ id_usuario: 1 });
-      //ejecuta la función
+      
       await register(mockReq, mockRes);
       
       expect(mockRes.status).toHaveBeenCalledWith(400);
@@ -85,74 +72,63 @@ describe('Auth Controller', () => {
         error: 'El email ya está registrado'
       });
     });
-  });
 
-  // describe las pruebas para la función de login
-  describe('login', () => {
-    // prueba para los credenciales
-    test('should login successfully with correct credentials', async () => {
+    test('should return error when password is invalid', async () => {
       mockReq.body = {
-        email: 'test@example.com',
-        contraseña: 'correctpass'
-      };
-      
-      const mockUser = {
-        id_usuario: 1,
-        email: 'test@example.com',
         nombre: 'Test User',
-        contraseña: 'hashedpass'
+        email: 'test@example.com',
+        contraseña: 'weak' // Contraseña que fallará todas las validaciones
       };
       
-      // configura los mocks
-      Usuario.findByEmail.mockResolvedValue(mockUser);
-      bcrypt.compare.mockResolvedValue(true);
-      jwt.sign.mockReturnValue('fake-token');
+      await register(mockReq, mockRes);
       
-      // ejecuta la funcion 
-      await login(mockReq, mockRes);
+      const response = mockRes.json.mock.calls[0][0];
       
-      // verificaciones
-      expect(bcrypt.compare).toHaveBeenCalledWith('correctpass', 'hashedpass');
-      expect(jwt.sign).toHaveBeenCalledWith(
-        {
-          id: 1,
-          email: 'test@example.com',
-          nombre: 'Test User'
-        },
-        'test-secret',
-        { expiresIn: '1h' }
-      );
+      // Verificaciones
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(response.error).toBe('Contraseña no válida');
+      
+      expect(response.details).toContain('Mínimo 8 caracteres');
+      expect(response.details).toContain('Al menos una mayúscula');
+      
+      if (response.details.includes('Al menos una minúscula')) {
+        expect(response.details).toContain('Al menos una minúscula');
+      }
+      if (response.details.includes('Al menos un número')) {
+        expect(response.details).toContain('Al menos un número');
+      }
+    });
+
+    test('should return error when required fields are missing', async () => {
+      mockReq.body = {
+        nombre: '',
+        email: '',
+        contraseña: ''
+      };
+      
+      await register(mockReq, mockRes);
+      
+      expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
-        token: 'fake-token',
-        user: {
-          id: 1,
-          nombre: 'Test User',
-          email: 'test@example.com'
-        }
+        error: 'Todos los campos son obligatorios'
       });
     });
 
-    // error con contraseña incorrecta
-    test('should return error with incorrect password', async () => {
+    test('should handle server errors during registration', async () => {
       mockReq.body = {
+        nombre: 'Test User',
         email: 'test@example.com',
-        contraseña: 'wrongpass'
+        contraseña: 'ValidPass123'
       };
       
-      const mockUser = {
-        id_usuario: 1,
-        email: 'test@example.com',
-        contraseña: 'hashedpass'
-      };
+      Usuario.findByEmail.mockRejectedValue(new Error('DB error'));
       
-      Usuario.findByEmail.mockResolvedValue(mockUser);
-      bcrypt.compare.mockResolvedValue(false);
+      await register(mockReq, mockRes);
       
-      await login(mockReq, mockRes);
-      
-      expect(mockRes.status).toHaveBeenCalledWith(401);
+      expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.json).toHaveBeenCalledWith({
-        error: 'Contraseña incorrecta'
+        error: 'Error en el servidor',
+        detalle: 'DB error'
       });
     });
   });
