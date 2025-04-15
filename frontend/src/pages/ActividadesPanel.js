@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Navbar from '../components/navbar/Navbar';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import SecondaryButton from '../components/buttons/SecondaryButton';
 import LightboxDetalles from '../components/LightboxDetalles';
@@ -41,7 +40,6 @@ const ActividadesPanel = () => {
 
     return (
         <div className='actividades-page'>
-            <Navbar />
             <section className='actividades-section'>
                 <h1 className='actividades-title'>Actividades Disponibles</h1>
                 <div className='actividades-list'>

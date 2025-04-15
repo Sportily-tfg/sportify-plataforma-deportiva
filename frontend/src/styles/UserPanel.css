@@ -1,13 +1,13 @@
 /* Estilos generales - Fondo oscuro como la web */
 .user-panel {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 2rem;
-    font-family: 'Roboto', sans-serif;
-    color: #FAFAFA; /* Texto claro */
-    background-color: #121212; /* Fondo oscuro principal */
-    min-height: calc(100vh - 100px); /* Ajuste altura */
-  }
+  max-width: 1200px;
+  margin: 5rem auto 2rem;
+  padding: 2rem;
+  font-family: 'Roboto', sans-serif;
+  color: #FAFAFA;
+  background-color: #121212;
+  min-height: calc(100vh - 80px);
+}
   
   /* Secciones - Tarjetas con bordes sutiles */
   .profile-section,

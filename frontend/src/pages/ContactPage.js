@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PrimaryButton from '../components/buttons/PrimaryButton'; // Importa tu SendButton
 import '../styles/Login.css'; // Importa el archivo CSS
-import Navbar from '../components/navbar/Navbar.js';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +27,6 @@ const ContactPage = () => {
 
   return (
     <div className="login-page">
-      <Navbar />
       <div className="login-section">
         {/* Título "Contáctanos" */}
         <h1 className="login-title">Contáctanos</h1>

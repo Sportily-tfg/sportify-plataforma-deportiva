@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/navbar/Navbar';
 import '../styles/UserPanel.css';
 
 const UserPanel = () => {
@@ -16,7 +15,6 @@ const UserPanel = () => {
 
     return (
         <div className="user-panel">
-            <Navbar/>
             {/*Sección 1: informacion del usuario*/}
             <section className="profile-section">
                 <h2>Mi perfil</h2>

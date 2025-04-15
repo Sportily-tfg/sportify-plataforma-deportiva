@@ -1,11 +1,12 @@
 /* src/styles/CalendarPage.css */
 .calendar-page {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 2rem;
-    color: #FAFAFA;
-    background-color: #121212;
-  }
+  max-width: 1200px;
+  margin: 4rem auto 2rem;
+  padding: 2rem;
+  color: #FAFAFA;
+  background-color: #121212;
+  min-height: calc(100vh - 80px);
+}
   
   .calendar-container {
     display: flex;

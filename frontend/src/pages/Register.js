@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import Navbar from "../components/navbar/Navbar";
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import SecondaryButton from '../components/buttons/SecondaryButton';
 import '../styles/Login.css';
@@ -55,7 +54,6 @@ const Register = () => {
 
     return (
         <div className="login-page">
-            <Navbar />
             <section className="login-section">
                 <h1 className="login-title">Sportify</h1>
                 <h2 className="login-slogan">Crea tu cuenta</h2>

@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import PrimaryButton from '../components/buttons/PrimaryButton';
-import Navbar from '../components/navbar/Navbar';
 import { useNavigate } from 'react-router-dom';
 
 const AboutPage = () => {
@@ -9,7 +8,6 @@ const AboutPage = () => {
 
   return (
     <AboutContainer>
-        <Navbar />
       <ContentSection>
         <Title>¿Qué es Sportify?</Title>
         <Description>

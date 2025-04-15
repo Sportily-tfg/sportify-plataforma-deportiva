@@ -8,27 +8,47 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
+  // Función para actualizar el estado del usuario
+  const updateUserState = () => {
+    const storedUser = localStorage.getItem('user');
+    setUser(storedUser ? JSON.parse(storedUser) : null);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setScroll(window.scrollY > 50);
     };
 
     // Verificar autenticación al cargar
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    updateUserState();
+
+    // Escuchar eventos de autenticación
+    const handleAuthChange = (e) => {
+      const userData = e?.detail?.user || JSON.parse(localStorage.getItem('user')) || null;
+      setUser(userData);
+    };
+
+    window.addEventListener('authChange', handleAuthChange);
+    window.addEventListener('storage', () => {
+      // Esperar un breve momento para asegurar que localStorage se actualizó
+      setTimeout(updateUserState, 100);
+    });
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('authChange', handleAuthChange);
+      window.removeEventListener('storage', handleAuthChange);
+    };
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    setUser(null);
+    window.dispatchEvent(new CustomEvent('authChange', { detail: { user: null } }));
     navigate('/login');
   };
+
 
   return (
     <Nav scroll={scroll}>
@@ -40,10 +60,13 @@ const Navbar = () => {
             <NavLink to="/">Inicio</NavLink>
           </NavItem>
           <NavItem>
-            <NavLink to="/contacto">Contacto</NavLink>
+            <NavLink to="/actividades">Actividades</NavLink>
           </NavItem>
           <NavItem>
-            <NavLink to="/actividades">Actividades</NavLink>
+            <NavLink to="/calendar">Calendario</NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink to="/contacto">Contacto</NavLink>
           </NavItem>
         </NavList>
       </LeftSection>
@@ -96,6 +119,8 @@ const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 80px;
+  box-sizing: border-box;
 `;
 
 const LeftSection = styled.div`
