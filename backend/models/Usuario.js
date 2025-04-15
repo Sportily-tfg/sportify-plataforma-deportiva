@@ -13,7 +13,7 @@ class Usuario {
     static async findByEmail(email) {
         try {
             const { rows } = await pool.query(
-                'SELECT * FROM usuarios WHERE email = $1',
+                'SELECT id_usuario, nombre, email, contraseña, rol FROM usuarios WHERE email = $1',
                 [email]
             );
             return rows[0] || null;

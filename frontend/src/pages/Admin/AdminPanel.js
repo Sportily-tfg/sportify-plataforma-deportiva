@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { Routes, Route, Link } from 'react-router-dom';
 import ActivitiesManagement from './ActivitiesManagement';
 import UsersManagement from './UsersManagement';
 import '../../styles/AdminPanel.css';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState('activities');
+    const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    useEffect(() => {
+        if (!user || user.rol !== 'admin') {
+            navigate('/');
+        }
+    }, [user, navigate]);
 
     return (
         <div className="admin-panel">

@@ -50,25 +50,32 @@ const Navbar = () => {
 
       {/* Sección de usuario (derecha) */}
       <RightSection>
-        {user ? (
-          <>
-            <UserMenu>
-              <UserGreeting>Hola, {user.nombre}</UserGreeting>
-              <DropdownMenu>
-                <DropdownItem onClick={() => navigate('/usuario')}>
-                  Mi perfil
-                </DropdownItem>
-                <DropdownItem onClick={handleLogout}>
-                  Cerrar sesión
-                </DropdownItem>
-              </DropdownMenu>
-            </UserMenu>
-          </>
-        ) : (
-          <NavItem>
-            <NavLink to="/login">Iniciar sesión</NavLink>
-          </NavItem>
+      {user ? (
+  <>
+    <UserMenu>
+      <UserGreeting>Hola, {user.nombre}</UserGreeting>
+      <DropdownMenu>
+        <DropdownItem onClick={() => navigate('/usuario')}>
+          Mi perfil
+        </DropdownItem>
+        
+        {user.rol === 'admin' && (
+          <DropdownItem onClick={() => navigate('/admin')}>
+            Panel de Administración
+          </DropdownItem>
         )}
+        
+        <DropdownItem onClick={handleLogout}>
+          Cerrar sesión
+        </DropdownItem>
+      </DropdownMenu>
+    </UserMenu>
+  </>
+) : (
+  <NavItem>
+    <NavLink to="/login">Iniciar sesión</NavLink>
+  </NavItem>
+)}
       </RightSection>
     </Nav>
   );

@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar/Navbar';
 import '../styles/UserPanel.css';
 
 const UserPanel = () => {
+    const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    // Verificar si el usuario está autenticado
+    useEffect(() => {
+        if (!user) {
+            navigate('/login');
+        }
+    }, [user, navigate]);
+
     return (
         <div className="user-panel">
             <Navbar/>
@@ -12,8 +23,8 @@ const UserPanel = () => {
                 <div className="avatar-placeholder"></div>
 
                 <div className="user-info">
-                    <p><strong>Nombre:</strong> -nombre del usuario- </p>
-                    <p><strong>Email:</strong> -email del usuario- </p>
+                    <p><strong>Nombre:</strong> {user?.nombre || '-nombre del usuario-'} </p>
+                    <p><strong>Email:</strong> {user?.email || '-email del usuario-'} </p>
                     <p><strong>Miembro desde:</strong> -fecha- </p>
                     <p><strong>Puntos:</strong> -puntos- </p>
                 </div>
@@ -35,8 +46,8 @@ const UserPanel = () => {
             <section className="rewards-section">
                 <h3>Recompensas Disponibles</h3>
                 <div className="reward-card">
-                <p><strong>Descuento 10%</strong> (300 puntos)</p>
-                <button className="redeem-btn">Canjear</button>
+                    <p><strong>Descuento 10%</strong> (300 puntos)</p>
+                    <button className="redeem-btn">Canjear</button>
                 </div>
                 {/* Más recompensas... */}
             </section>

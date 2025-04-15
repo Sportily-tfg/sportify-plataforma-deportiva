@@ -70,7 +70,8 @@ const login = async (req, res) => {
             { 
                 id: usuario.id_usuario,
                 email: usuario.email,
-                nombre: usuario.nombre 
+                nombre: usuario.nombre,
+                rol: usuario.rol // Añadir rol al token
             },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
@@ -81,10 +82,10 @@ const login = async (req, res) => {
             user: {
                 id: usuario.id_usuario,
                 nombre: usuario.nombre,
-                email: usuario.email
+                email: usuario.email,
+                rol: usuario.rol // Añadir rol a la respuesta
             }
         });
-
     } catch (error) {
         console.error("Error en login:", error);
         res.status(500).json({ 

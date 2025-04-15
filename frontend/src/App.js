@@ -9,6 +9,7 @@ import UserPanel from './pages/UserPanel';
 import CalendarPage from './pages/CalendarPage';
 import AdminPanel from './pages/Admin/AdminPanel';
 import AboutPage from './pages/AboutPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -31,13 +32,21 @@ function App() {
           <Route path="/actividades" element={<ActividadesPanel />} />
 
           {/* Ruta para el panel de usuario */}
-          <Route path="/usuario" element={<UserPanel />} />
+          <Route path="/usuario" element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <UserPanel />
+            </ProtectedRoute>
+          } />
 
           {/* Ruta para el calendario */}
           <Route path="/calendar" element={<CalendarPage />} />
 
           {/* Ruta para el panel de administrador */}
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/admin" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminPanel />
+            </ProtectedRoute>
+          } />
 
           {/* Ruta para la página Sobre Nosotros */}
           <Route path="/about" element={<AboutPage />} />

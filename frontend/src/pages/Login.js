@@ -29,25 +29,25 @@ const Login = () => {
         e.preventDefault();
         
         try {
-            // Autenticación con el backend
             const response = await axios.post(
                 'http://localhost:5000/api/auth/login', 
                 formData
             );
             
-            // Guardar token en localStorage
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
             
-            // Redirigir al dashboard
-            navigate('/');
+            // Redirigir según el rol
+            if (response.data.user.rol === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
             
         } catch (err) {
-            // Mostrar error específico del backend
             setError(err.response?.data?.error || 'Credenciales inválidas');
         }
     };
-
     return (
         <div className="login-page">
             <Navbar />
