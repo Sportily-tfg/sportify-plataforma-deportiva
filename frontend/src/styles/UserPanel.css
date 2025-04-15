@@ -51,7 +51,7 @@
     justify-content: center;
     color: white;
     font-weight: bold;
-    border: 3px solid #3F51B5; /* Azul secundario */
+    border: 3px solid #47C7FC; /* Azul secundario */
   }
   
   /* Textos - Jerarquía visual */
@@ -62,12 +62,6 @@
     line-height: 1.6;
   }
   
-  .user-info strong,
-  .reservation-card strong,
-  .reward-card strong {
-    color: #FF8000; /* Destaca etiquetas */
-  }
-  
   /* Tarjetas - Efecto hover como actividades */
   .reservation-card,
   .reward-card {
@@ -76,7 +70,7 @@
     margin: 1.5rem 0;
     border-radius: 8px;
     transition: all 0.3s ease;
-    border-left: 4px solid #3F51B5; /* Azul */
+    border-left: 4px solid #47C7FC; /* Azul */
   }
   
   .reservation-card:hover,

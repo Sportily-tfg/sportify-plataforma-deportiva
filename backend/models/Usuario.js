@@ -5,45 +5,40 @@ const pool = require('../config/db');
  * Contiene métodos para buscar por email y crear usuarios
  */
 class Usuario {
-    /**
-     * Busca un usuario por email
-     * @param {string} email - Email del usuario a buscar
-     * @returns {Promise<Object|null>} Usuario encontrado o null
-     */
     static async findByEmail(email) {
-        try {
-            const { rows } = await pool.query(
-                'SELECT id_usuario, nombre, email, contraseña, rol FROM usuarios WHERE email = $1',
-                [email]
-            );
-            return rows[0] || null;
-        } catch (error) {
-            console.error("Error buscando usuario por email:", error);
-            throw error;
-        }
+        const { rows } = await pool.query(
+            'SELECT id_usuario, nombre, email, contraseña, rol, fecha_registro FROM usuarios WHERE email = $1',
+            [email]
+        );
+        return rows[0] || null;
     }
 
-    /**
-     * Crea un nuevo usuario en la base de datos
-     * @param {Object} userData - Datos del usuario
-     * @param {string} userData.nombre
-     * @param {string} userData.email
-     * @param {string} userData.contraseña
-     * @returns {Promise<number>} ID del usuario creado
-     */
+    static async findById(id) {
+        const { rows } = await pool.query(
+            `SELECT 
+                u.id_usuario, 
+                u.nombre, 
+                u.email, 
+                u.rol, 
+                u.fecha_registro,
+                COALESCE(SUM(g.puntos), 0) AS puntos
+             FROM usuarios u
+             LEFT JOIN gamificacion g ON u.id_usuario = g.id_usuario
+             WHERE u.id_usuario = $1
+             GROUP BY u.id_usuario`,
+            [id]
+        );
+        return rows[0] || null;
+    }
+
     static async create({ nombre, email, contraseña }) {
-        try {
-            const { rows } = await pool.query(
-                `INSERT INTO usuarios (nombre, email, contraseña) 
-                 VALUES ($1, $2, $3) 
-                 RETURNING id_usuario`,
-                [nombre, email, contraseña]
-            );
-            return rows[0].id_usuario;
-        } catch (error) {
-            console.error("Error creando usuario:", error);
-            throw error;
-        }
+        const { rows } = await pool.query(
+            `INSERT INTO usuarios (nombre, email, contraseña, fecha_registro) 
+             VALUES ($1, $2, $3, CURRENT_DATE)
+             RETURNING id_usuario, nombre, email, rol, fecha_registro`,
+            [nombre, email, contraseña]
+        );
+        return rows[0];
     }
 }
 
