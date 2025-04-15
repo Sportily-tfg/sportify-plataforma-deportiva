@@ -48,3 +48,62 @@
     color: white;
     font-size: 1rem;
   }
+
+  /* Agrega esto al final de tu Login.css */
+
+/* Estilo base para mensajes de error */
+.error-message {
+    color: #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.1);
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    text-align: left;
+    border-left: 3px solid #ff6b6b;
+}
+
+/* Lista de errores de contraseña */
+.password-errors {
+    margin: 0.5rem 0 1rem 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.password-errors li {
+    color: #ff9e9e;
+    font-size: 0.8rem;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+}
+
+.password-errors li:before {
+    content: "•";
+    color: #ff6b6b;
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+/* Estilo para inputs con error */
+.login-input.error {
+    border-color: #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.05);
+}
+
+/* Estilo para cuando la validación es exitosa */
+.login-input.valid {
+    border-color: #4caf50;
+}
+
+/* Estilo para mensaje de éxito */
+.success-message {
+    color: #4caf50;
+    background-color: rgba(76, 175, 80, 0.1);
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    text-align: left;
+    border-left: 3px solid #4caf50;
+}

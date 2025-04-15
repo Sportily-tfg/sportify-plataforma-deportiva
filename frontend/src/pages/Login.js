@@ -36,7 +36,11 @@ const Login = () => {
       // Redirección
       navigate(response.data.user.rol === 'admin' ? '/admin' : '/about');
     } catch (err) {
-      setError(err.response?.data?.error || 'Credenciales inválidas');
+        if (err.response?.data?.details) {
+            setError(err.response.data.error + ": " + err.response.data.details.join(', '));
+        } else {
+            setError(err.response?.data?.error || 'Credenciales inválidas');
+        }
     }
   };
 
