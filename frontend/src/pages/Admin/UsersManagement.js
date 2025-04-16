@@ -1,75 +1,176 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SecondaryButton from '../../components/buttons/SecondaryButton';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import '../../styles/AdminComponents.css';
 
-// Datos de prueba
-const mockUsers = [
-  { id: 1, name: "Carlos Ruiz", email: "carlos@example.com", role: "user", joinDate: "2024-01-15" },
-  { id: 2, name: "Admin User", email: "admin@example.com", role: "admin", joinDate: "2023-11-20" }
-];
-
 const UsersManagement = () => {
-  const [users, setUsers] = useState(mockUsers);
+  const [users, setUsers] = useState([]);
   const [isEditing, setIsEditing] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
+    nombre: '',
     email: '',
-    role: 'user'
+    contraseña: '',
+    rol: 'user'
   });
+
+  // Obtener usuarios del backend
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No hay token de autenticación');
+  
+      const response = await fetch('http://localhost:5000/api/users', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json(); // Captura el error del backend
+        throw new Error(errorData.error || 'Error al obtener usuarios');
+      }
+  
+      const data = await response.json();
+      setUsers(data);
+    } catch (err) {
+      console.error('Error completo:', err); // Ver esto en la consola del navegador
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isEditing) {
-      // Actualizar usuario existente
-      setUsers(users.map(user => 
-        user.id === isEditing ? { ...formData, id: isEditing } : user
-      ));
-    } else {
-      // Crear nuevo usuario
-      const newUser = {
-        ...formData,
-        id: Date.now(),
-        joinDate: new Date().toISOString().split('T')[0]
-      };
+  // Crear usuario
+  const handleCreateUser = async (userData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(userData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al crear usuario');
+      }
+
+      const newUser = await response.json();
       setUsers([...users, newUser]);
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
+  // Actualizar usuario
+  const handleUpdateUser = async (id, userData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(userData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar usuario');
+      }
+
+      const updatedUser = await response.json();
+      setUsers(users.map(user => user.id_usuario === id ? updatedUser : user));
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
+  // Eliminar usuario
+  const handleDeleteUser = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar usuario');
+      }
+
+      setUsers(users.filter(user => user.id_usuario !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    if (isEditing) {
+      await handleUpdateUser(isEditing, formData);
+    } else {
+      await handleCreateUser(formData);
     }
     setIsEditing(null);
-    setFormData({ name: '', email: '', role: 'user' });
+    setFormData({ nombre: '', email: '', contraseña: '', rol: 'user' });
+    fetchUsers(); // Refrescar lista
   };
 
   const handleEdit = (user) => {
-    setIsEditing(user.id);
+    setIsEditing(user.id_usuario);
     setFormData({
-      name: user.name,
+      nombre: user.nombre,
       email: user.email,
-      role: user.role
+      contraseña: '',
+      rol: user.rol
     });
   };
 
   const handleDelete = (id) => {
-    setUsers(users.filter(user => user.id !== id));
+    if (window.confirm('¿Estás seguro de eliminar este usuario?')) {
+      handleDeleteUser(id);
+    }
   };
+
+  if (isLoading) return <div className="management-container">Cargando...</div>;
+  if (error) return <div className="management-container">Error: {error}</div>;
 
   return (
     <div className="management-container">
       <h2>Gestión de Usuarios</h2>
       
-      {/* Formulario para crear/editar usuarios */}
       <form onSubmit={handleSubmit} className="admin-form">
-        <h3>{isEditing ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h3>
+        <h3>{isEditing ? 'Editar Usuario' : 'Crear Usuario'}</h3>
         
         <div className="form-group">
           <label>Nombre:</label>
           <input
             type="text"
-            name="name"
-            value={formData.name}
+            name="nombre"
+            value={formData.nombre}
             onChange={handleInputChange}
             required
           />
@@ -86,11 +187,24 @@ const UsersManagement = () => {
           />
         </div>
 
+        {!isEditing && (
+          <div className="form-group">
+            <label>Contraseña:</label>
+            <input
+              type="password"
+              name="contraseña"
+              value={formData.contraseña}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+        )}
+
         <div className="form-group">
           <label>Rol:</label>
           <select
-            name="role"
-            value={formData.role}
+            name="rol"
+            value={formData.rol}
             onChange={handleInputChange}
           >
             <option value="user">Usuario</option>
@@ -99,44 +213,47 @@ const UsersManagement = () => {
         </div>
 
         <div className="form-buttons">
-          <PrimaryButton lightText={true}
+          <PrimaryButton 
+            lightText={true}
             texto={isEditing ? 'Guardar' : 'Crear'} 
             type="submit" 
           />
           {isEditing && (
-            <SecondaryButton lightText={true}
+            <SecondaryButton 
+              lightText={true}
               texto="Cancelar" 
               onClick={() => {
                 setIsEditing(null);
-                setFormData({ name: '', email: '', role: 'user' });
+                setFormData({ nombre: '', email: '', contraseña: '', rol: 'user' });
               }} 
             />
           )}
         </div>
       </form>
       
-      {/* Lista de usuarios */}
       <div className="items-list">
         <h3>Usuarios Registrados</h3>
         {users.length === 0 ? (
           <p>No hay usuarios registrados</p>
         ) : (
           users.map(user => (
-            <div key={user.id} className="item-card">
+            <div key={user.id_usuario} className="item-card">
               <div className="item-info">
-                <h4>{user.name}</h4>
+                <h4>{user.nombre}</h4>
                 <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Rol:</strong> {user.role}</p>
-                <p><strong>Miembro desde:</strong> {user.joinDate}</p>
+                <p><strong>Rol:</strong> {user.rol}</p>
+                <p><strong>Registro:</strong> {new Date(user.fecha_registro).toLocaleDateString()}</p>
               </div>
               <div className="item-actions">
-                <SecondaryButton lightText={true}
+                <SecondaryButton 
+                  lightText={true}
                   texto="Editar" 
                   onClick={() => handleEdit(user)} 
                 />
                 <SecondaryButton 
-                  texto="Eliminar" lightText={true}
-                  onClick={() => handleDelete(user.id)}  
+                  lightText={true}
+                  texto="Eliminar" 
+                  onClick={() => handleDelete(user.id_usuario)}  
                 />
               </div>
             </div>
