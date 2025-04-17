@@ -1,14 +1,17 @@
+// importar dependencias necesarias
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { register, login } = require('../../controllers/authController');
 const Usuario = require('../../models/Usuario');
 
-// Mocks
+// Mocks para simular los módulos y evitar dependencias locales
 jest.mock('../../models/Usuario');
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
 
+// Configuración de un entorno limpio para las pruebas.
 describe('Auth Controller', () => {
+  // simulan solicitud y respuesta http
   let mockReq, mockRes;
 
   beforeEach(() => {
@@ -24,12 +27,14 @@ describe('Auth Controller', () => {
     process.env.JWT_SECRET = 'test-secret';
   });
 
+  // limpia los mocks despues de cada test
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   describe('register', () => {
-    test('should register a new user successfully with valid data', async () => {
+    // Prueba de registro exitoso
+    test(' debería registrarse un nuevo usuario de forma satisfactoria con datos válidos', async () => {
       mockReq.body = {
         nombre: 'Test User',
         email: 'test@example.com',
@@ -56,7 +61,9 @@ describe('Auth Controller', () => {
       });
     });
 
-    test('should return error when email already exists', async () => {
+    // Pruebas de validacion de errores
+    // emails existentes
+    test('Debería devolver un error cuando el email ya exista.', async () => {
       mockReq.body = {
         nombre: 'Test User',
         email: 'existing@example.com',
@@ -73,7 +80,8 @@ describe('Auth Controller', () => {
       });
     });
 
-    test('should return error when password is invalid', async () => {
+    // contraseña inválida
+    test('debería devolver un error cuando la contraseña no sea válida', async () => {
       mockReq.body = {
         nombre: 'Test User',
         email: 'test@example.com',
@@ -99,7 +107,8 @@ describe('Auth Controller', () => {
       }
     });
 
-    test('should return error when required fields are missing', async () => {
+    // campos vacios
+    test('debería devolver un error cuando haya campos vacios', async () => {
       mockReq.body = {
         nombre: '',
         email: '',
@@ -114,7 +123,8 @@ describe('Auth Controller', () => {
       });
     });
 
-    test('should handle server errors during registration', async () => {
+    // error en el servidor
+    test('debería manejar errores de servidor durante el registro', async () => {
       mockReq.body = {
         nombre: 'Test User',
         email: 'test@example.com',
