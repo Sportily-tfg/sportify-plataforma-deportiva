@@ -1,143 +1,249 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import SecondaryButton from '../../components/buttons/SecondaryButton';
 import '../../styles/AdminComponents.css';
 
-// Datos de prueba (simularán tu backend)
-const mockActivities = [
-  { id: 1, name: "Yoga Matutino", date: "2024-06-15", time: "09:00", capacity: 20, instructor: "Ana López" },
-  { id: 2, name: "Pádel Avanzado", date: "2024-06-16", time: "18:00", court: "Pista 1", capacity: 4 }
-];
 
 const ActivitiesManagement = () => {
-  const [activities, setActivities] = useState(mockActivities);
-  const [isEditing, setIsEditing] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    date: '',
-    time: '',
-    capacity: '',
-    instructor: '',
-    court: ''
-  });
+    const [activities, setActivities] = useState([]);
+    const [isEditing, setIsEditing] = useState(null);
+    const [formData, setFormData] = useState({
+        nombre_actividad: '',
+        descripcion: '',
+        descripcion_larga: '',
+        nivel_dificultad: 'Intermedio',
+        max_participantes: '',
+        precio: ''
+    });
+    
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+    // Cargar actividades al montar el componente
+    useEffect(() => {
+        fetchActivities();
+    }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isEditing) {
-      // Lógica para editar
-      setActivities(activities.map(a => a.id === isEditing ? { ...formData, id: isEditing } : a));
-    } else {
-      // Lógica para crear
-      setActivities([...activities, { ...formData, id: Date.now() }]);
-    }
-    setIsEditing(null);
-    setFormData({ name: '', date: '', time: '', capacity: '', instructor: '', court: '' });
-  };
+    const fetchActivities = async () => {
+        try {
+            const response = await fetch('/api/activities');
+            const data = await response.json();
+            setActivities(data);
+        } catch (error) {
+            console.error('Error al cargar actividades:', error);
+        }
+    };
 
-  const handleEdit = (activity) => {
-    setIsEditing(activity.id);
-    setFormData(activity);
-  };
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
-  const handleDelete = (id) => {
-    setActivities(activities.filter(a => a.id !== id));
-  };
-
-  return (
-    <div className="management-container">
-      <h2>Gestión de Actividades</h2>
-      
-      {/* Formulario para crear/editar */}
-      <form onSubmit={handleSubmit} className="admin-form">
-        <h3>{isEditing ? 'Editar Actividad' : 'Crear Nueva Actividad'}</h3>
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         
-        <div className="form-group">
-          <label>Nombre:</label>
-          <input 
-            type="text" 
-            name="name" 
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+        try {
+            const token = localStorage.getItem('token');
+            const url = isEditing ? `/api/activities/${isEditing}` : '/api/activities';
+            const method = isEditing ? 'PUT' : 'POST';
 
-        <div className="form-row">
-          <div className="form-group">
-            <label>Fecha:</label>
-            <input 
-              type="date" 
-              name="date" 
-              value={formData.date}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Hora:</label>
-            <input 
-              type="time" 
-              name="time" 
-              value={formData.time}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-        </div>
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(formData)
+            });
 
-        <div className="form-buttons">
-          <PrimaryButton lightText={true}
-            texto={isEditing ? 'Guardar' : 'Crear actividad'} 
-            type="submit" 
-          />
-          {isEditing && (
-            <SecondaryButton lightText={true}
-              texto="Cancelar" 
-              onClick={() => {
-                setIsEditing(null);
-                setFormData({ name: '', date: '', time: '', capacity: '', instructor: '', court: '' });
-              }} 
-            />
-          )}
-        </div>
-      </form>
+            if (!response.ok) {
+                throw new Error('Error al guardar la actividad');
+            }
 
-      {/* Lista de actividades */}
-      <div className="items-list">
-        <h3>Actividades Programadas</h3>
-        {activities.length === 0 ? (
-          <p>No hay actividades registradas</p>
-        ) : (
-          activities.map(activity => (
-            <div key={activity.id} className="item-card">
-              <div className="item-info">
-                <h4>{activity.name}</h4>
-                <p><strong>Fecha:</strong> {activity.date} {activity.time}</p>
-                {activity.instructor && <p><strong>Instructor:</strong> {activity.instructor}</p>}
-                {activity.court && <p><strong>Pista:</strong> {activity.court}</p>}
-                <p><strong>Capacidad:</strong> {activity.capacity}</p>
-              </div>
-              <div className="item-actions">
-                <SecondaryButton lightText={true}
-                  texto="Editar" 
-                  onClick={() => handleEdit(activity)} 
-                />
-                <SecondaryButton lightText={true}
-                  texto="Eliminar" 
-                  onClick={() => handleDelete(activity.id)}  
-                />
-              </div>
+            fetchActivities(); // Recargar la lista
+            setIsEditing(null);
+            setFormData({
+                nombre_actividad: '',
+                descripcion: '',
+                descripcion_larga: '',
+                nivel_dificultad: 'Intermedio',
+                max_participantes: '',
+                precio: ''
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al guardar la actividad');
+        }
+    };
+
+    const handleEdit = (activity) => {
+        setIsEditing(activity.id_actividad);
+        setFormData({
+            nombre_actividad: activity.nombre_actividad,
+            descripcion: activity.descripcion,
+            descripcion_larga: activity.descripcion_larga || '',
+            nivel_dificultad: activity.nivel_dificultad,
+            max_participantes: activity.max_participantes,
+            precio: activity.precio
+        });
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('¿Estás seguro de eliminar esta actividad?')) return;
+        
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`/api/activities/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al eliminar la actividad');
+            }
+
+            fetchActivities(); // Recargar la lista
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al eliminar la actividad');
+        }
+    };
+
+    return (
+        <div className="management-container">
+            <h2>Gestión de Actividades</h2>
+            
+            {/* Formulario para crear/editar */}
+            <form onSubmit={handleSubmit} className="admin-form">
+                <h3>{isEditing ? 'Editar Actividad' : 'Crear Nueva Actividad'}</h3>
+                
+                <div className="form-group">
+                    <label>Nombre:</label>
+                    <input 
+                        type="text" 
+                        name="nombre_actividad" 
+                        value={formData.nombre_actividad}
+                        onChange={handleInputChange}
+                        required
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Descripción corta:</label>
+                    <textarea
+                        name="descripcion" 
+                        value={formData.descripcion}
+                        onChange={handleInputChange}
+                        required
+                        rows="3"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Descripción larga:</label>
+                    <textarea
+                        name="descripcion_larga" 
+                        value={formData.descripcion_larga}
+                        onChange={handleInputChange}
+                        rows="5"
+                    />
+                </div>
+
+                <div className="form-row">
+                    <div className="form-group">
+                        <label>Nivel de dificultad:</label>
+                        <select
+                            name="nivel_dificultad"
+                            value={formData.nivel_dificultad}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            <option value="Bajo">Bajo</option>
+                            <option value="Intermedio">Intermedio</option>
+                            <option value="Avanzado">Avanzado</option>
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label>Máx. participantes:</label>
+                        <input 
+                            type="number" 
+                            name="max_participantes" 
+                            value={formData.max_participantes}
+                            onChange={handleInputChange}
+                            required
+                            min="1"
+                        />
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <label>Precio (€):</label>
+                    <input 
+                        type="number" 
+                        name="precio" 
+                        value={formData.precio}
+                        onChange={handleInputChange}
+                        required
+                        min="0"
+                        step="0.01"
+                    />
+                </div>
+
+                <div className="form-buttons">
+                    <PrimaryButton lightText={true}
+                        texto={isEditing ? 'Guardar cambios' : 'Crear actividad'} 
+                        type="submit" 
+                    />
+                    {isEditing && (
+                        <SecondaryButton lightText={true}
+                            texto="Cancelar" 
+                            onClick={() => {
+                                setIsEditing(null);
+                                setFormData({
+                                    nombre_actividad: '',
+                                    descripcion: '',
+                                    descripcion_larga: '',
+                                    nivel_dificultad: 'Intermedio',
+                                    max_participantes: '',
+                                    precio: ''
+                                });
+                            }} 
+                        />
+                    )}
+                </div>
+            </form>
+
+            {/* Lista de actividades */}
+            <div className="items-list">
+                <h3>Actividades Programadas</h3>
+                {activities.length === 0 ? (
+                    <p>No hay actividades registradas</p>
+                ) : (
+                    activities.map(activity => (
+                        <div key={activity.id_actividad} className="item-card">
+                            <div className="item-info">
+                                <h4>{activity.nombre_actividad}</h4>
+                                <p>{activity.descripcion}</p>
+                                <p><strong>Dificultad:</strong> {activity.nivel_dificultad}</p>
+                                <p><strong>Participantes máx:</strong> {activity.max_participantes}</p>
+                                <p><strong>Precio:</strong> {activity.precio} €</p>
+                            </div>
+                            <div className="item-actions">
+                                <SecondaryButton lightText={true}
+                                    texto="Editar" 
+                                    onClick={() => handleEdit(activity)} 
+                                />
+                                <SecondaryButton lightText={true}
+                                    texto="Eliminar" 
+                                    onClick={() => handleDelete(activity.id_actividad)}  
+                                />
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default ActivitiesManagement;

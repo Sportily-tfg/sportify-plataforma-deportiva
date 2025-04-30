@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const activityRoutes = require('./routes/activityRoutes');
+
 
 const app = express();
 
@@ -18,6 +20,7 @@ app.use((req, res, next) => {
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/activities', activityRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
