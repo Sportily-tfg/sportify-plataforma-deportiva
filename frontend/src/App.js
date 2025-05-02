@@ -1,69 +1,96 @@
-import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { createContext, useState, useEffect } from 'react';
-import HomePage from './pages/HomePage';
-import ContactPage from './pages/ContactPage';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ActividadesPanel from './pages/ActividadesPanel';
-import UserPanel from './pages/UserPanel';
-import CalendarPage from './pages/CalendarPage';
-import AdminPanel from './pages/Admin/AdminPanel';
-import UsersManagement from './pages/Admin/UsersManagement';
-import AboutPage from './pages/AboutPage';
-import ProtectedRoute from './components/ProtectedRoute';
-import Navbar from './components/navbar/Navbar';
-
-export const AuthContext = createContext();
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext"; // Añade useAuth aquí
+import HomePage from "./pages/HomePage";
+import ContactPage from "./pages/ContactPage";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ActividadesPanel from "./pages/ActividadesPanel";
+import CalendarPage from "./pages/CalendarPage";
+import AboutPage from "./pages/AboutPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
+import Navbar from "./components/navbar/Navbar";
+import UserPanel from "./pages/UserPanel";
+import AdminPanel from "./pages/Admin/AdminPanel";
 
 function App() {
-  const [auth, setAuth] = useState(null);
+  const { loading } = useAuth(); // Ahora useAuth está definido
 
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    if (user && token) {
-      setAuth({ user: JSON.parse(user), token });
-    }
-  }, []);
+  if (loading) {
+    return <div className="loading-screen">Cargando...</div>;
+  }
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthProvider>
       <Router>
         <Navbar />
         <div className="App">
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/contacto" element={<ContactPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/actividades" element={<ActividadesPanel />} />
-            
-            <Route path="/usuario" element={
-              <ProtectedRoute allowedRoles={['user', 'admin']}>
-                <UserPanel />
-              </ProtectedRoute>
-            } />
-
-            <Route path="/calendar" element={<CalendarPage />} />
-            
-            <Route path="/admin" element={
-              <ProtectedRoute allowedRoles={['admin']}>
-                <AdminPanel />
-              </ProtectedRoute>
-            } />
-
-            <Route path="/admin/users" element={
-              <ProtectedRoute allowedRoles={['admin']}>
-                <UsersManagement />
-              </ProtectedRoute>
-            } />
-
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/contacto" element={<ContactPage />} />
+            {/* Páginas accesibles solo si no hay sesión iniciada */}
+            <Route
+              path="/"
+              element={
+                <PublicRoute>
+                  <HomePage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              }
+            />
+            {/* Páginas accesibles solo si hay sesión iniciada */}
+            <Route
+              path="/actividades"
+              element={
+                <ProtectedRoute>
+                  <ActividadesPanel />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <ProtectedRoute>
+                  <CalendarPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/usuario"
+              element={
+                <ProtectedRoute>
+                  <UserPanel />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]} redirectPath="/">
+                  <AdminPanel />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </Router>
-    </AuthContext.Provider>
+    </AuthProvider>
   );
 }
 

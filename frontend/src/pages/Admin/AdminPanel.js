@@ -1,31 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import ActivitiesManagement from './ActivitiesManagement';
 import UsersManagement from './UsersManagement';
 import '../../styles/AdminPanel.css';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState('activities');
+    const { user, loading } = useAuth();
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem('user'));
+    const location = useLocation();
 
     useEffect(() => {
-        if (!user || user.rol !== 'admin') {
-            navigate('/');
+        if (!loading && (!user || user.rol !== 'admin')) {
+            navigate('/', { 
+                state: { 
+                    from: location,
+                    message: 'Acceso restringido a administradores' 
+                } 
+            });
         }
-    }, [user, navigate]);
+    }, [user, loading, navigate, location]);
+
+    if (loading) {
+        return <div className="loading">Cargando...</div>;
+    }
 
     return (
         <div className="admin-panel">
+            
             <div className="admin-sidebar">
                 <h2>Panel de administración</h2>
-
                 <nav>
-                    <button className={`admin-nav-btn ${activeTab === 'activities' ? 'active' : ''}`} onClick={() => setActiveTab('activities')}>
-                        Gestión de actividades</button>
-                    <button className={`admin-nav-btn ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
-                        Gestión de usuarios</button>
+                    <button 
+                        className={`admin-nav-btn ${activeTab === 'activities' ? 'active' : ''}`} 
+                        onClick={() => setActiveTab('activities')}
+                    >
+                        Gestión de actividades
+                    </button>
+                    <button 
+                        className={`admin-nav-btn ${activeTab === 'users' ? 'active' : ''}`} 
+                        onClick={() => setActiveTab('users')}
+                    >
+                        Gestión de usuarios
+                    </button>
                 </nav>
             </div>
 
@@ -33,7 +51,7 @@ const AdminPanel = () => {
                 {activeTab === 'activities' ? <ActivitiesManagement /> : <UsersManagement />}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default AdminPanel;

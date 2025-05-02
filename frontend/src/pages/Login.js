@@ -4,6 +4,7 @@ import axios from "axios";
 import PrimaryButton from "../components/buttons/PrimaryButton";
 import SecondaryButton from "../components/buttons/SecondaryButton";
 import "../styles/Login.css";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const Login = () => {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -24,23 +26,21 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', formData);
+      const { token, user } = response.data;
       
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      
-      // Disparar evento personalizado con los datos del usuario
-      window.dispatchEvent(new CustomEvent('authChange', {
-        detail: { user: response.data.user }
-      }));
-      
-      // Redirección
-      navigate(response.data.user.rol === 'admin' ? '/admin' : '/about');
+      login(user, token);
+      // Redirección basada en el rol
+      if (user.rol === 'admin') {
+        window.location.href = '/admin'; // Redirige al panel de admin
+      } else {
+        window.location.href = '/about'; // Redirige a about para usuarios normales
+      }
     } catch (err) {
-        if (err.response?.data?.details) {
-            setError(err.response.data.error + ": " + err.response.data.details.join(', '));
-        } else {
-            setError(err.response?.data?.error || 'Credenciales inválidas');
-        }
+      if (err.response?.data?.details) {
+        setError(err.response.data.error + ": " + err.response.data.details.join(', '));
+      } else {
+        setError(err.response?.data?.error || 'Credenciales inválidas');
+      }
     }
   };
 

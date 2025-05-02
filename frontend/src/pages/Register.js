@@ -4,6 +4,7 @@ import axios from "axios";
 import PrimaryButton from "../components/buttons/PrimaryButton";
 import SecondaryButton from "../components/buttons/SecondaryButton";
 import "../styles/Login.css";
+import { useAuth } from "../context/AuthContext";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,12 @@ const Register = () => {
   const [passwordErrors, setPasswordErrors] = useState([]);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Redirigir si ya está autenticado
+  if (user) {
+    navigate('/about');
+  }
 
   const validatePassword = (password) => {
     const errors = [];
@@ -40,7 +47,6 @@ const Register = () => {
       validatePassword(value);
     }
 
-    // Limpiar error cuando se modifica el campo
     if (error && name === "confirmPassword" && value === formData.contraseña) {
       setError("");
     }
