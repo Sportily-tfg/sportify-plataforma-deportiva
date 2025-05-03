@@ -5,27 +5,39 @@ const LightDetalles = ({ actividad, onClose }) => {
     return (
         <LightboxOverlay>
             <LightboxContainer>
-                <CloseButton onClick={onClose}>x</CloseButton>
-                <h2 style={{ color: 'white' }}>{actividad.nombre_actividad}</h2>
+                <CloseButton onClick={onClose}>×</CloseButton>
+                <Titulo>{actividad.nombre_actividad}</Titulo>
 
-                <DetallesGrid>
-                    <DetalleItem>
-                        <h4>Descripción completa: </h4>
-                        <p>{actividad.descripcion_larga || actividad.descripcion}</p>
-                    </DetalleItem>
+                {/* Sección superior con horario y requisitos */}
+                <InfoSuperior>
+                    <InfoItem>
+                        <InfoLabel>Horario:</InfoLabel>
+                        <InfoText>Lunes y Miércoles - 18:00 a 20:00</InfoText>
+                    </InfoItem>
 
-                    <DetalleItem>
-                        <h4>Horario:</h4>
-                        <p>Lunes y Miércoles - 18:00 a 20:00</p>
-                    </DetalleItem>
+                    <InfoItem>
+                        <InfoLabel>Requisitos:</InfoLabel>
+                        <InfoText>Ropa deportiva y botella de agua</InfoText>
+                    </InfoItem>
 
-                    <DetalleItem>
-                        <h4>Requisitos:</h4>
-                        <p>Ropa deportiva y botella de agua</p>
-                    </DetalleItem>
-                </DetallesGrid>
+                    <InfoItem>
+                        <InfoLabel>Dificultad:</InfoLabel>
+                        <InfoText>{actividad.nivel_dificultad}</InfoText>
+                    </InfoItem>
 
-                <SecondaryButton onClick={onClose}>Cerrar</SecondaryButton>
+                    <InfoItem>
+                        <InfoLabel>Participantes:</InfoLabel>
+                        <InfoText>{actividad.max_participantes}</InfoText>
+                    </InfoItem>
+                </InfoSuperior>
+
+                {/* Sección de descripción completa abajo */}
+                <DescripcionContainer>
+                    <InfoLabel>Descripción completa:</InfoLabel>
+                    <DescripcionText>{actividad.descripcion_larga || actividad.descripcion}</DescripcionText>
+                </DescripcionContainer>
+
+                <BotonCerrar onClick={onClose}>Cerrar</BotonCerrar>
             </LightboxContainer>
         </LightboxOverlay>
     );
@@ -33,8 +45,7 @@ const LightDetalles = ({ actividad, onClose }) => {
 
 export default LightDetalles;
 
-//estilos
-
+// Estilos mejorados
 const LightboxOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -57,45 +68,71 @@ const LightboxContainer = styled.div`
   width: 100%;
   position: relative;
   border: 1px solid #FF8000;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 `;
 
 const CloseButton = styled.button`
   position: absolute;
   top: 15px;
   right: 15px;
-   background: none;
+  background: none;
   border: none;
   color: white;
   font-size: 2rem;
   cursor: pointer;
   transition: color 0.3s;
+  line-height: 1;
 
   &:hover {
     color: #FF8000;
   }
 `;
 
-const DetallesGrid = styled.div`
+const Titulo = styled.h2`
+  color: white;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+`;
+
+const InfoSuperior = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
-  margin: 2rem 0;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #333;
 `;
 
-const DetalleItem = styled.div`
-  h4 {
-    color: #FF8000;
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
-  }
-  
-  p {
-    color: #e0e0e0;
-    line-height: 1.6;
-  }
+const InfoItem = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
-const SecondaryButton = styled.button`
+const InfoLabel = styled.h4`
+  color: #FF8000;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+`;
+
+const InfoText = styled.p`
+  color: #e0e0e0;
+  line-height: 1.6;
+  margin: 0;
+`;
+
+const DescripcionContainer = styled.div`
+  margin-top: 1rem;
+`;
+
+const DescripcionText = styled.p`
+  color: #e0e0e0;
+  line-height: 1.6;
+  margin-top: 0.5rem;
+  white-space: pre-line;
+`;
+
+const BotonCerrar = styled.button`
   background-color: transparent;
   color: #FF8000;
   border: 1px solid #FF8000;
@@ -104,6 +141,8 @@ const SecondaryButton = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s;
+  align-self: flex-end;
+  margin-top: 1rem;
   
   &:hover {
     background-color: rgba(255, 128, 0, 0.1);
