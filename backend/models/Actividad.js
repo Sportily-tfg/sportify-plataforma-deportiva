@@ -5,13 +5,13 @@ const pool = require('../config/db');
  */
 class Actividad {
     // Crear una nueva actividad
-    static async create({ nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio }) {
+    static async create({ nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha }) {
         const { rows } = await pool.query(
             `INSERT INTO actividades 
-             (nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio)
-             VALUES ($1, $2, $3, $4, $5, $6)
+             (nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)
              RETURNING *`,
-            [nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio]
+            [nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha]
         );
         return rows[0];
     }
@@ -29,7 +29,7 @@ class Actividad {
     }
 
     // Actualizar actividad
-    static async update(id, { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio }) {
+    static async update(id, { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha }) {
         const { rows } = await pool.query(
             `UPDATE actividades 
              SET nombre_actividad = $1, 
@@ -37,10 +37,11 @@ class Actividad {
                  descripcion_larga = $3, 
                  nivel_dificultad = $4, 
                  max_participantes = $5, 
-                 precio = $6
-             WHERE id_actividad = $7
+                 precio = $6,
+                 fecha = $7
+             WHERE id_actividad = $8
              RETURNING *`,
-            [nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, id]
+            [nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, id]
         );
         return rows[0];
     }

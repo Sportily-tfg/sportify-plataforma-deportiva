@@ -44,6 +44,8 @@ const ActividadesPanel = () => {
                             <p className="actividad-descripcion">{actividad.descripcion}</p>
                             <p className="actividad-info">Dificultad: {actividad.nivel_dificultad}</p>
                             <p className="actividad-info">Máx. participantes: {actividad.max_participantes}</p>
+                            <p className="actividad-info">Fecha: {new Date(actividad.fecha).toLocaleDateString('es-ES')}</p>
+                            <p className="actividad-info">Hora: {new Date(actividad.fecha).toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})}</p>
                             <p className="actividad-precio">Precio: {Number(actividad.precio).toFixed(2)} €</p>
                             <div className='actividad-buttons'>
                                 <PrimaryButton texto="Reservar" lightText={true} className='reservar-btn' />

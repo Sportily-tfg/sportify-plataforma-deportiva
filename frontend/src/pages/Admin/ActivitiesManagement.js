@@ -13,7 +13,8 @@ const ActivitiesManagement = () => {
         descripcion_larga: '',
         nivel_dificultad: 'Intermedio',
         max_participantes: '',
-        precio: ''
+        precio: '',
+        fecha: ''
     });
     
 
@@ -66,7 +67,8 @@ const ActivitiesManagement = () => {
                 descripcion_larga: '',
                 nivel_dificultad: 'Intermedio',
                 max_participantes: '',
-                precio: ''
+                precio: '',
+                fecha: ''
             });
         } catch (error) {
             console.error('Error:', error);
@@ -82,7 +84,8 @@ const ActivitiesManagement = () => {
             descripcion_larga: activity.descripcion_larga || '',
             nivel_dificultad: activity.nivel_dificultad,
             max_participantes: activity.max_participantes,
-            precio: activity.precio
+            precio: activity.precio,
+            fecha: activity.fecha ? formatDateForInput(new Date(activity.fecha)) : ''
         });
     };
 
@@ -177,6 +180,17 @@ const ActivitiesManagement = () => {
                 </div>
 
                 <div className="form-group">
+                    <label>Fecha:</label>
+                    <input
+                        type="datetime-local"
+                        name="fecha" 
+                        value={formData.fecha}
+                        onChange={handleInputChange}
+                        required
+                    />
+                </div>
+
+                <div className="form-group">
                     <label>Precio (€):</label>
                     <input 
                         type="number" 
@@ -244,6 +258,18 @@ const ActivitiesManagement = () => {
             </div>
         </div>
     );
+};
+
+const formatDateForInput = (date) => {
+    if (!date || !(date instanceof Date)) return '';
+    
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
 export default ActivitiesManagement;

@@ -22,11 +22,16 @@ const activityController = {
                 return res.status(403).json({ error: 'No autorizado' });
             }
 
-            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio } = req.body;
+            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha } = req.body;
 
             // Validación básica
             if (!nombre_actividad || !descripcion || !nivel_dificultad || !max_participantes || !precio) {
                 return res.status(400).json({ error: 'Faltan campos obligatorios' });
+            }
+
+            //Validación para la fehca
+            if (!fecha || !Date.parse(fecha)) {
+                return res.status(400).json({ error: 'Fecha no válida'});
             }
 
             const nuevaActividad = await Actividad.create({
@@ -35,7 +40,8 @@ const activityController = {
                 descripcion_larga,
                 nivel_dificultad,
                 max_participantes,
-                precio
+                precio,
+                fecha: new Date(fecha)
             });
 
             res.status(201).json(nuevaActividad);
@@ -53,7 +59,11 @@ const activityController = {
             }
 
             const { id } = req.params;
-            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio } = req.body;
+            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha } = req.body;
+
+            if (fecha && !Date.parse(fecha)) {
+                return res.status(400).json({ error: 'Fecha no válida' });
+            }
 
             const actividadActualizada = await Actividad.update(id, {
                 nombre_actividad,
@@ -61,7 +71,8 @@ const activityController = {
                 descripcion_larga,
                 nivel_dificultad,
                 max_participantes,
-                precio
+                precio,
+                fecha: fecha ? new Date(fecha) : undefined
             });
 
             if (!actividadActualizada) {

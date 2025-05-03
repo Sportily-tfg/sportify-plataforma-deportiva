@@ -1,0 +1,88 @@
+.calendar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .calendar-wrapper {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+  }
+  
+  .react-calendar {
+    width: 400px;
+    max-width: 100%;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+  }
+  
+  .react-calendar__tile {
+    position: relative;
+    padding: 10px;
+    color: inherit;
+  }
+  
+  .react-calendar__tile--now {
+    background: #2a2a2a;
+  }
+  
+  .react-calendar__tile--active {
+    background: #FF8000;
+    color: white;
+  }
+  
+  .activity-dot {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: #FF8000;
+    border-radius: 50%;
+  }
+  
+  .activities-list {
+    flex: 1;
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    color: white;
+  }
+  
+  .activity-item {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
+  }
+  
+  .activity-item h4 {
+    color: #FF8000;
+    margin-bottom: 5px;
+  }
+  
+  .activity-item p {
+    color: #ccc;
+    margin: 5px 0;
+  }
+  
+  .loading, .error {
+    color: white;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .calendar-wrapper {
+      flex-direction: column;
+    }
+    
+    .react-calendar {
+      width: 100%;
+    }
+  }
