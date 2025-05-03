@@ -5,13 +5,13 @@ const pool = require('../config/db');
  */
 class Actividad {
     // Crear una nueva actividad
-    static async create({ nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha }) {
+    static async create({ nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario }) {
         const { rows } = await pool.query(
             `INSERT INTO actividades 
-             (nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
+             (nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
              RETURNING *`,
-            [nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha]
+            [nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario]
         );
         return rows[0];
     }
@@ -29,7 +29,7 @@ class Actividad {
     }
 
     // Actualizar actividad
-    static async update(id, { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha }) {
+    static async update(id, { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario }) {
         const { rows } = await pool.query(
             `UPDATE actividades 
              SET nombre_actividad = $1, 
@@ -38,10 +38,11 @@ class Actividad {
                  nivel_dificultad = $4, 
                  max_participantes = $5, 
                  precio = $6,
-                 fecha = $7
-             WHERE id_actividad = $8
+                 fecha = $7,
+                 horario = $8
+             WHERE id_actividad = $9
              RETURNING *`,
-            [nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, id]
+            [nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario, id]
         );
         return rows[0];
     }

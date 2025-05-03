@@ -14,7 +14,8 @@ const ActivitiesManagement = () => {
         nivel_dificultad: 'Intermedio',
         max_participantes: '',
         precio: '',
-        fecha: ''
+        fecha: '',
+        horario: ''
     });
     
 
@@ -68,7 +69,8 @@ const ActivitiesManagement = () => {
                 nivel_dificultad: 'Intermedio',
                 max_participantes: '',
                 precio: '',
-                fecha: ''
+                fecha: '',
+                horario: ''
             });
         } catch (error) {
             console.error('Error:', error);
@@ -85,7 +87,8 @@ const ActivitiesManagement = () => {
             nivel_dificultad: activity.nivel_dificultad,
             max_participantes: activity.max_participantes,
             precio: activity.precio,
-            fecha: activity.fecha ? formatDateForInput(new Date(activity.fecha)) : ''
+            fecha: activity.fecha ? activity.fecha.split('T')[0] : '',
+            horario: activity.horario ? formatTimeForInput(activity.horario) : ''
         });
     };
 
@@ -181,10 +184,21 @@ const ActivitiesManagement = () => {
 
                 <div className="form-group">
                     <label>Fecha:</label>
-                    <input
-                        type="datetime-local"
+                    <input 
+                        type="date" 
                         name="fecha" 
                         value={formData.fecha}
+                        onChange={handleInputChange}
+                        required
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Horario (HH:MM):</label>
+                    <input 
+                        type="time" 
+                        name="horario" 
+                        value={formData.horario}
                         onChange={handleInputChange}
                         required
                     />
@@ -219,7 +233,9 @@ const ActivitiesManagement = () => {
                                     descripcion_larga: '',
                                     nivel_dificultad: 'Intermedio',
                                     max_participantes: '',
-                                    precio: ''
+                                    precio: '',
+                                    fecha: '',
+                                    horario: ''
                                 });
                             }} 
                         />
@@ -260,16 +276,10 @@ const ActivitiesManagement = () => {
     );
 };
 
-const formatDateForInput = (date) => {
-    if (!date || !(date instanceof Date)) return '';
-    
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+const formatTimeForInput = (timeString) => {
+    if (!timeString) return '';
+    const [hours, minutes] = timeString.split(':');
+    return `${hours}:${minutes}`;
 };
 
 export default ActivitiesManagement;

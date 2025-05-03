@@ -22,7 +22,7 @@ const activityController = {
                 return res.status(403).json({ error: 'No autorizado' });
             }
 
-            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha } = req.body;
+            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario } = req.body;
 
             // Validación básica
             if (!nombre_actividad || !descripcion || !nivel_dificultad || !max_participantes || !precio) {
@@ -34,6 +34,11 @@ const activityController = {
                 return res.status(400).json({ error: 'Fecha no válida'});
             }
 
+            //Validación para la fecha
+            if (!horario || !/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(horario)) {
+                return res.status(400).json({ error: 'Formato de horario no válido (HH:MM)' });
+            }
+
             const nuevaActividad = await Actividad.create({
                 nombre_actividad,
                 descripcion,
@@ -41,7 +46,8 @@ const activityController = {
                 nivel_dificultad,
                 max_participantes,
                 precio,
-                fecha: new Date(fecha)
+                fecha,
+                horario
             });
 
             res.status(201).json(nuevaActividad);
@@ -59,8 +65,9 @@ const activityController = {
             }
 
             const { id } = req.params;
-            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha } = req.body;
+            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario } = req.body;
 
+            // Validación de la fecha
             if (fecha && !Date.parse(fecha)) {
                 return res.status(400).json({ error: 'Fecha no válida' });
             }
@@ -72,7 +79,8 @@ const activityController = {
                 nivel_dificultad,
                 max_participantes,
                 precio,
-                fecha: fecha ? new Date(fecha) : undefined
+                fecha,
+                horario
             });
 
             if (!actividadActualizada) {
