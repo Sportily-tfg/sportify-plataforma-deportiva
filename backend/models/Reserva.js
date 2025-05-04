@@ -30,6 +30,15 @@ class Reserva {
         return rows;   
     }
 
+    static async delete(id_reserva, id_usuario){
+        const { rowCount } = await pool.query(
+            `DELETE FROM reservas
+            WHERE id_reserva = $1 AND id_usuario = $2`,
+            [id_reserva, id_usuario]
+        );
+        return rowCount > 0;
+    }
+
 }
 
 module.exports = Reserva;

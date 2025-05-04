@@ -33,6 +33,29 @@ const reservationController = {
             console.error('Error al obtener reservas:', error);
             res.status(500).json({ error: 'Error del servidor' });
         }
+    },
+
+    deleteReservation: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const id_usuario = req.user.id;
+    
+            // Validar que el ID sea un número válido
+            if (!id || isNaN(id)) {
+                return res.status(400).json({ error: 'ID de reserva no válido' });
+            }
+    
+            const deleted = await Reserva.delete(parseInt(id), id_usuario);
+    
+            if (!deleted) {
+                return res.status(404).json({ error: 'Reserva no encontrada o no pertenece al usuario' });
+            }
+    
+            res.json({ message: 'Reserva eliminada correctamente' });
+        } catch (error) {
+            console.error('Error al eliminar reserva:', error);
+            res.status(500).json({ error: 'Error del servidor al eliminar reserva' });
+        }
     }
 };
 
