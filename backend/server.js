@@ -4,7 +4,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const activityRoutes = require('./routes/activityRoutes');
-
+const reservationRoutes = require('./routes/reservationRoutes');
 
 const app = express();
 
@@ -21,6 +21,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/activities', activityRoutes);
+app.use('/api/reservations', reservationRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {

@@ -2,25 +2,42 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import PrimaryButton from '../components/buttons/PrimaryButton';
+import { useAuth } from '../context/AuthContext';
 import '../styles/CalendarActivities.css';
 
 const CalendarActivities = () => {
     const [date, setDate] = useState(new Date());
     const [activities, setActivities] = useState([]);
+    const [reservations, setReservations] = useState([]);
     const [selectedActivities, setSelectedActivities] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { user } = useAuth();
 
-    // Obtener actividades de la API
+    // Obtener actividades y reservas
     useEffect(() => {
-        const fetchActivities = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch('/api/activities');
-                if (!response.ok) {
-                    throw new Error('Error al cargar actividades');
+                setLoading(true);
+                
+                // Obtener actividades
+                const activitiesResponse = await fetch('/api/activities');
+                if (!activitiesResponse.ok) throw new Error('Error al cargar actividades');
+                const activitiesData = await activitiesResponse.json();
+                setActivities(activitiesData);
+
+                // Obtener reservas del usuario si está logueado
+                if (user) {
+                    const reservationsResponse = await fetch('/api/reservations', {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                    if (reservationsResponse.ok) {
+                        const reservationsData = await reservationsResponse.json();
+                        setReservations(reservationsData);
+                    }
                 }
-                const data = await response.json();
-                setActivities(data);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -28,8 +45,8 @@ const CalendarActivities = () => {
             }
         };
 
-        fetchActivities();
-    }, []);
+        fetchData();
+    }, [user]);
 
     // Formatear fecha para comparación
     const formatDate = (date) => {
@@ -40,6 +57,13 @@ const CalendarActivities = () => {
     const hasActivities = (date) => {
         return activities.some(activity => 
             formatDate(new Date(activity.fecha)) === formatDate(date)
+        );
+    };
+
+    // Verificar si una actividad está reservada
+    const isReserved = (activityId) => {
+        return reservations.some(reservation => 
+            reservation.id_actividad === activityId
         );
     };
 
@@ -55,25 +79,32 @@ const CalendarActivities = () => {
 
     // Función para manejar reservas
     const handleReserve = async (activityId) => {
+        if (!user) {
+            alert('Debes iniciar sesión para reservar');
+            return;
+        }
+
         try {
-            const token = localStorage.getItem('token');
             const response = await fetch('/api/reservations', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify({ activityId })
+                body: JSON.stringify({ id_actividad: activityId })
             });
 
             if (response.ok) {
+                const newReservation = await response.json();
+                setReservations([...reservations, newReservation]);
                 alert('Reserva realizada con éxito');
             } else {
-                throw new Error('Error al realizar la reserva');
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error al realizar la reserva');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Error al realizar la reserva');
+            alert(error.message);
         }
     };
 
@@ -98,16 +129,21 @@ const CalendarActivities = () => {
                     <h3>Actividades para {date.toLocaleDateString('es-ES')}</h3>
                     {selectedActivities.length > 0 ? (
                         selectedActivities.map(activity => (
-                            <div key={activity.id_actividad} className="activity-item">
+                            <div 
+                                key={activity.id_actividad} 
+                                className={`activity-item ${isReserved(activity.id_actividad) ? 'reserved' : ''}`}
+                            >
                                 <h4>{activity.nombre_actividad}</h4>
-                                <p><strong>Hora:</strong>{new Date(activity.fecha).toLocaleDateString([], { hour: '2-digit', minute: '2-digit'})}</p>
-                                {activity.lugar && <p><strong>Lugar:</strong> {activity.lugar}</p>}
-                                {activity.instructor && <p><strong>Instructor:</strong> {activity.instructor}</p>}
-                                <PrimaryButton 
-                                    texto="Reservar" 
-                                    lightText={true}
-                                    onClick={() => handleReserve(activity.id_actividad)} 
-                                />
+                                <p><strong>Hora:</strong> {activity.horario}</p>
+                                <p><strong>Dificultad:</strong> {activity.nivel_dificultad}</p>
+                                <p><strong>Precio:</strong> {activity.precio}€</p>
+                                {!isReserved(activity.id_actividad) ? (
+                                    <PrimaryButton 
+                                        texto="Reservar" 
+                                        lightText={true}
+                                        onClick={() => handleReserve(activity.id_actividad)} 
+                                    />
+                                ) : (<p></p>)}
                             </div>
                         ))
                     ) : (

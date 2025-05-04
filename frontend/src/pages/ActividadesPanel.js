@@ -3,8 +3,10 @@ import PrimaryButton from '../components/buttons/PrimaryButton';
 import SecondaryButton from '../components/buttons/SecondaryButton';
 import LightboxDetalles from '../components/LightboxDetalles';
 import '../styles/ActividadesPanel.css';
+import { useAuth } from '../context/AuthContext';
 
 const ActividadesPanel = () => {
+    const { user } = useAuth();
     const [actividades, setActividades] = useState([]);
     const [actividadSeleccionada, setActividadSeleccionada] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -33,6 +35,33 @@ const ActividadesPanel = () => {
     if (loading) return <div className='actividades-page'>Cargando actividades...</div>;
     if (error) return <div className='actividades-page'>Error: {error}</div>;
 
+    const handleReservar = async (id_actividad) => {
+        if (!user) {
+            alert('Debes iniciar sesión para reservar');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/reservations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ id_actividad })
+            });
+
+            if (!response.ok) {
+                throw new Error(await response.text());
+            }
+
+            alert('Reserva realizada con éxito');
+        } catch (error) {
+            console.error('Error al reservar:', error);
+            alert(error.message);
+        }
+    }
+
     return (
         <div className='actividades-page'>
             <section className='actividades-section'>
@@ -48,7 +77,7 @@ const ActividadesPanel = () => {
                             <p className="actividad-info">Hora: {actividad.horario}</p>
                             <p className="actividad-precio">Precio: {Number(actividad.precio).toFixed(2)} €</p>
                             <div className='actividad-buttons'>
-                                <PrimaryButton texto="Reservar" lightText={true} className='reservar-btn' />
+                                <PrimaryButton texto="Reservar" lightText={true} className='reservar-btn' onClick={() => handleReservar(actividad.id_actividad)}/>
                                 <SecondaryButton 
                                     texto="Detalles" 
                                     lightText={true} 
