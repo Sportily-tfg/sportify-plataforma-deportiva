@@ -39,6 +39,17 @@ class Reserva {
         return rowCount > 0;
     }
 
+    static async cancel(id_reserva, id_usuario) {
+        const { rows } = await pool.query(
+            `UPDATE reservas
+            SET estado = 'cancelada'
+            WHERE id_reserva = $1 AND id_usuario = $2
+            RETURNING *`,
+            [id_reserva, id_usuario]
+        );
+        return rows[0];
+    }
+
 }
 
 module.exports = Reserva;

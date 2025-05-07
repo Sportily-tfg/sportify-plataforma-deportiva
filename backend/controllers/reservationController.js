@@ -35,6 +35,41 @@ const reservationController = {
         }
     },
 
+    cancelReservation: async (req, res) => {
+        try {
+            const { id } = req.params;
+            
+            // Conversión segura a número
+            const reservationId = parseInt(id, 10);
+            if (isNaN(reservationId)) {
+                return res.status(400).json({ 
+                    error: 'El ID de reserva debe ser un número válido',
+                    receivedId: id,
+                    typeReceived: typeof id
+                });
+            }
+    
+            const id_usuario = req.user.id;
+            const reservaCancelada = await Reserva.cancel(reservationId, id_usuario);
+    
+            if (!reservaCancelada) {
+                return res.status(404).json({ 
+                    error: 'Reserva no encontrada',
+                    details: `ID: ${reservationId} no existe o no pertenece al usuario ${id_usuario}`
+                });
+            }
+    
+            res.json(reservaCancelada);
+    
+        } catch (error) {
+            console.error('Error en cancelación:', error);
+            res.status(500).json({ 
+                error: 'Error interno del servidor',
+                details: error.message 
+            });
+        }
+    },
+
     deleteReservation: async (req, res) => {
         try {
             const { id } = req.params;

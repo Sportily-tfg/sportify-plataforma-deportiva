@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/UserPanel.css';
+import PrimaryButton from '../components/buttons/PrimaryButton';
+import { type } from '@testing-library/user-event/dist/cjs/setup/directApi.js';
 
 const UserPanel = () => {
     const [data, setData] = useState(null);
@@ -38,6 +40,47 @@ const UserPanel = () => {
         }
     }, [navigate, user, data]); 
 
+    const handleCancelReservation = async (reservaId) => {
+        try {
+            // Asegurarnos que el ID es numérico
+            const numericId = Number(reservaId);
+            if (isNaN(numericId)) {
+                console.error('ID no es numérico:', reservaId);
+                alert('El ID de reserva no es válido');
+                return;
+            }
+    
+            console.log('Enviando ID:', numericId, 'Tipo:', typeof numericId);
+    
+            const response = await axios.put(
+                `http://localhost:5000/api/reservations/${numericId}/cancel`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+    
+            // Actualizar el estado
+            setData(prev => ({
+                ...prev,
+                reservas: prev.reservas.map(r => 
+                    r.id_reserva === numericId ? { ...r, estado: 'cancelada' } : r
+                )
+            }));
+    
+        } catch (error) {
+            console.error('Error detallado:', {
+                message: error.message,
+                responseData: error.response?.data,
+                status: error.response?.status
+            });
+            alert(error.response?.data?.error || 'Error al cancelar reserva');
+        }
+    };
+
     if (loading) return <div className="user-panel">Cargando...</div>;
     if (error) return <div className="user-panel error-message">{error}</div>;
 
@@ -58,11 +101,21 @@ const UserPanel = () => {
             <section className="reservations-section">
                 <h3>Mis reservas</h3>
                 {data?.reservas?.length > 0 ? (
-                    data.reservas.map((reserva, index) => (
-                        <div key={index} className="reservation-card">
+                    data.reservas.map((reserva) => (
+                        <div key={reserva.id_reserva} className="reservation-card">
+                            <p><strong>ID:</strong> {reserva.id_reserva} (Tipo: {typeof reserva.id_reserva})</p>
                             <p><strong>Actividad:</strong> {reserva.nombre_actividad}</p>
                             <p><strong>Fecha:</strong> {new Date(reserva.fecha_reserva).toLocaleDateString()}</p>
                             <p><strong>Estado:</strong> {reserva.estado}</p>
+                            
+                            {reserva.estado === 'pendiente' && (
+                                <PrimaryButton 
+                                    onClick={() => handleCancelReservation(reserva.id_reserva)}
+                                    className="cancel-button"
+                                    texto="Cancelar reserva"
+                                    lightText={ true }
+                                />
+                            )}
                         </div>
                     ))
                 ) : (
