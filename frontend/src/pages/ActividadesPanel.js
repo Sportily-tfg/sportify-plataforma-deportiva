@@ -7,21 +7,27 @@ import { useAuth } from '../context/AuthContext';
 
 const ActividadesPanel = () => {
     const { user } = useAuth();
-    const [actividades, setActividades] = useState([]);
     const [actividadSeleccionada, setActividadSeleccionada] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [actividades, setActividades] = useState([]);
+    const [actividadesFiltradas, setActividadesFiltradas] = useState([]);
+    const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Todas');
+    const [categorias, setCategorias] = useState(['Todas']);
 
-    // Cargar actividades al montar el componente
-    useEffect(() => {
-        const fetchActividades = async () => {
+ useEffect(() => {
+        const fetchData = async () => {
             try {
+                // Obtener actividades
                 const response = await fetch('/api/activities');
-                if (!response.ok) {
-                    throw new Error('Error al cargar actividades');
-                }
+                if (!response.ok) throw new Error('Error al cargar actividades');
                 const data = await response.json();
                 setActividades(data);
+                setActividadesFiltradas(data);
+
+                // Extraer categorías únicas de las actividades
+                const categoriasUnicas = ['Todas', ...new Set(data.map(a => a.categoria))];
+                setCategorias(categoriasUnicas);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -29,8 +35,20 @@ const ActividadesPanel = () => {
             }
         };
 
-        fetchActividades();
+        fetchData();
     }, []);
+
+    // Filtrar actividades cuando cambia la categoría seleccionada
+    useEffect(() => {
+        if (categoriaSeleccionada === 'Todas') {
+            setActividadesFiltradas(actividades);
+        } else {
+            const filtradas = actividades.filter(actividad => 
+                actividad.categoria === categoriaSeleccionada
+            );
+            setActividadesFiltradas(filtradas);
+        }
+    }, [categoriaSeleccionada, actividades]);
 
     if (loading) return <div className='actividades-page'>Cargando actividades...</div>;
     if (error) return <div className='actividades-page'>Error: {error}</div>;
@@ -65,14 +83,31 @@ const ActividadesPanel = () => {
     return (
         <div className='actividades-page'>
             <section className='actividades-section'>
+            <div className="filtro-container">
                 <h1 className='actividades-title'>Actividades Disponibles</h1>
+                <div className="filtro-categoria">
+                        <label>Filtrar por categoría:</label>
+                        <select
+                            value={categoriaSeleccionada}
+                            onChange={(e) => setCategoriaSeleccionada(e.target.value)}
+                        >
+                            {categorias.map(categoria => (
+                                <option key={categoria} value={categoria}>
+                                    {categoria}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
                 <div className='actividades-list'>
-                    {actividades.map((actividad) => (
+                    {actividadesFiltradas.map((actividad) => (
                         <div className="actividad-card" key={actividad.id_actividad}>
                             <h2 className="actividad-nombre">{actividad.nombre_actividad}</h2>
                             <p className="actividad-descripcion">{actividad.descripcion}</p>
                             <p className="actividad-info">Dificultad: {actividad.nivel_dificultad}</p>
                             <p className="actividad-info">Máx. participantes: {actividad.max_participantes}</p>
+                            <p className="actividad-info">Categoría: {actividad.categoria}</p>
                             <p className="actividad-info">Fecha: {new Date(actividad.fecha).toLocaleDateString('es-ES')}</p>
                             <p className="actividad-info">Hora: {actividad.horario}</p>
                             <p className="actividad-precio">Precio: {Number(actividad.precio).toFixed(2)} €</p>

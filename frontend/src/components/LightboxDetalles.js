@@ -10,6 +10,12 @@ const LightDetalles = ({ actividad, onClose }) => {
 
                 {/* Sección superior con horario y requisitos */}
                 <InfoSuperior>
+
+                    <InfoItem>
+                        <InfoLabel>Categoría:</InfoLabel>
+                        <InfoText>{actividad.categoria}</InfoText>
+                    </InfoItem>
+                    
                     <InfoItem>
                         <InfoLabel>Horario:</InfoLabel>
                         <InfoText>Lunes y Miércoles - 18:00 a 20:00</InfoText>

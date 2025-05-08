@@ -126,6 +126,46 @@
     background-color: rgba(255, 128, 0, 0.1);
 }
 
+.filtro-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filtro-categoria {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filtro-categoria label {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.filtro-categoria select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background-color: white;
+    font-size: 14px;
+    min-width: 180px;
+    cursor: pointer;
+}
+
+.filtro-categoria select:focus {
+    outline: none;
+    border-color: #FF8000;
+    box-shadow: 0 0 0 2px rgba(255, 128, 0, 0.2);
+}
+
+.actividades-list {
+    margin-top: 20px;
+}
+
 /* Animación para el lightbox */
 @keyframes fadeIn {
     from { opacity: 0; }
