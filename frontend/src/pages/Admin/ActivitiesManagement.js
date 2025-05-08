@@ -15,7 +15,8 @@ const ActivitiesManagement = () => {
         max_participantes: '',
         precio: '',
         fecha: '',
-        horario: ''
+        horario: '',
+        categoria: 'General'
     });
     
 
@@ -24,9 +25,13 @@ const ActivitiesManagement = () => {
         fetchActivities();
     }, []);
 
-    const fetchActivities = async () => {
+    const fetchActivities = async (categoria = null) => {
         try {
-            const response = await fetch('/api/activities');
+            const url = categoria 
+            ? `/api/activities?categoria=${encodeURIComponent(categoria)}`
+            : '/api/activities';
+            
+            const response = await fetch(url);
             const data = await response.json();
             setActivities(data);
         } catch (error) {
@@ -70,7 +75,8 @@ const ActivitiesManagement = () => {
                 max_participantes: '',
                 precio: '',
                 fecha: '',
-                horario: ''
+                horario: '',
+                categoria: 'General'
             });
         } catch (error) {
             console.error('Error:', error);
@@ -169,6 +175,22 @@ const ActivitiesManagement = () => {
                             <option value="Avanzado">Avanzado</option>
                         </select>
                     </div>
+
+                    <div className="form-group">
+                        <label>Categoría:</label>
+                        <select
+                            name="categoria"
+                            value={formData.categoria}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            <option value="General">General</option>
+                            <option value="Aventura">Aventura</option>
+                            <option value="Bienestar">Bienestar</option>
+                            <option value="Equipo">Equipo</option>
+                        </select>
+                    </div>
+
                     <div className="form-group">
                         <label>Máx. participantes:</label>
                         <input 
@@ -244,6 +266,23 @@ const ActivitiesManagement = () => {
             </form>
 
             {/* Lista de actividades */}
+
+            <div className="filter-section">
+                <label>Filtrar: </label>
+                <select 
+                    onChange={(e) => {
+                        const categoria = e.target.value;
+                        fetchActivities(categoria);
+                    }}
+                >
+                    <option value="">Todas las categorías</option>
+                    <option value="General">General</option>
+                    <option value="Aventura">Aventura</option>
+                    <option value="Bienestar">Bienestar</option>
+                    <option value="Equipo">Equipo</option>
+                </select>
+            </div>
+
             <div className="items-list">
                 <h3>Actividades Programadas</h3>
                 {activities.length === 0 ? (
@@ -256,6 +295,7 @@ const ActivitiesManagement = () => {
                                 <p>{activity.descripcion}</p>
                                 <p><strong>Dificultad:</strong> {activity.nivel_dificultad}</p>
                                 <p><strong>Participantes máx:</strong> {activity.max_participantes}</p>
+                                <p><strong>Categoría:</strong> {activity.categoria}</p>
                                 <p><strong>Precio:</strong> {activity.precio} €</p>
                             </div>
                             <div className="item-actions">

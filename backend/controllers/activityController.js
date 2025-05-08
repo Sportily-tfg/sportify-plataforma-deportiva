@@ -7,7 +7,7 @@ const activityController = {
     // Obtener todas las actividades
     getAllActivities: async (req, res) => {
         try {
-            const actividades = await Actividad.getAll();
+            const actividades = await Actividad.getAll(req.query.categoria);
             res.json(actividades);
         } catch (error) {
             console.error('Error al obtener actividades:', error);
@@ -22,14 +22,19 @@ const activityController = {
                 return res.status(403).json({ error: 'No autorizado' });
             }
 
-            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario } = req.body;
+            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario, categoria = 'General' } = req.body;
 
             // Validación básica
-            if (!nombre_actividad || !descripcion || !nivel_dificultad || !max_participantes || !precio) {
+            if (!nombre_actividad || !descripcion || !nivel_dificultad || !max_participantes || !precio || !categoria) {
                 return res.status(400).json({ error: 'Faltan campos obligatorios' });
             }
 
-            //Validación para la fehca
+            const categoriasPermitidas = ['General', 'Aventura', 'Bienestar', 'Equipo'];
+            if (!categoriasPermitidas.includes(categoria)) {
+                return res.status(400).json({ error: 'Categoría no válida'})
+            }
+
+            //Validación para la fecha
             if (!fecha || !Date.parse(fecha)) {
                 return res.status(400).json({ error: 'Fecha no válida'});
             }
@@ -47,7 +52,8 @@ const activityController = {
                 max_participantes,
                 precio,
                 fecha,
-                horario
+                horario,
+                categoria
             });
 
             res.status(201).json(nuevaActividad);
@@ -65,7 +71,7 @@ const activityController = {
             }
 
             const { id } = req.params;
-            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario } = req.body;
+            const { nombre_actividad, descripcion, descripcion_larga, nivel_dificultad, max_participantes, precio, fecha, horario, categoria } = req.body;
 
             // Validación de la fecha
             if (fecha && !Date.parse(fecha)) {
@@ -80,7 +86,8 @@ const activityController = {
                 max_participantes,
                 precio,
                 fecha,
-                horario
+                horario,
+                categoria
             });
 
             if (!actividadActualizada) {
