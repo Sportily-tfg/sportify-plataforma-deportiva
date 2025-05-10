@@ -66,7 +66,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", {
+      const response = await axios.post("https://sportify-plataforma-deportiva-production.up.railway.app/api/auth/register", {
         nombre: formData.nombre,
         email: formData.email,
         contraseña: formData.contraseña,
