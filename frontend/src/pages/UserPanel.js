@@ -14,7 +14,7 @@ const UserPanel = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`https://sportify-plataforma-deportiva-production.up.railway.app/api/users/${user.id}`, {
+                const response = await axios.get(`https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users/${user.id}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
@@ -62,7 +62,7 @@ const UserPanel = () => {
             console.log('Cancelando reserva ID:', id);
             
             const response = await axios.put(
-                `https://sportify-plataforma-deportiva-production.up.railway.app/api/reservations/${id}/cancel`,
+                `https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations/${id}/cancel`,
                 {},
                 {
                     headers: {

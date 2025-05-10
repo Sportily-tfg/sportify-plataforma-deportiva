@@ -71,5 +71,5 @@ if (app._router && app._router.stack) {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
-  console.log(`URL del backend: https://sportify-plataforma-deportiva-production.up.railway.app`);
+  console.log(`URL del backend: https://sportify-plataforma-deportiva-production-7eec.up.railway.app`);
 });

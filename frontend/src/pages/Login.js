@@ -25,7 +25,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://sportify-plataforma-deportiva-production.up.railway.app/api/auth/login', formData);
+      const response = await axios.post('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/auth/login', formData);
       const { token, user } = response.data;
       
       login(user, token);
