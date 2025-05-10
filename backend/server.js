@@ -10,7 +10,7 @@ const app = express();
 
 // 1. Configuración de CORS (dominios permitidos)
 const allowedOrigins = [
-  'https://sportify-plataforma-deportiva-zeta.vercel.app', // URL de Vercel
+  'https://sportify-plataforma-deportiva-xi.vercel.app', // URL de Vercel
   'http://localhost:3000',          // Para desarrollo local
 ];
 
@@ -61,9 +61,11 @@ app.use((err, req, res, next) => {
 });
 
 console.log("Rutas registradas en producción:");
-app._router.stack.forEach((r) => {
-  if (r.route?.path) console.log(r.route.path);
-});
+if (app._router && app._router.stack) {
+  app._router.stack.forEach((r) => {
+    if (r.route?.path) console.log(r.route.path);
+  });
+}
 
 // 6. Iniciar servidor (usando el puerto de Railway)
 const PORT = process.env.PORT || 5000;
