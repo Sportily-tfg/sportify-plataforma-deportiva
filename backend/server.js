@@ -10,7 +10,7 @@ const app = express();
 
 // 1. Configuración de CORS (dominios permitidos)
 const allowedOrigins = [
-  'https://sportify-plataforma-deportiva-zeta.vercel.app', // Reemplaza con tu URL de Vercel
+  'https://sportify-plataforma-deportiva-zeta.vercel.app', // URL de Vercel
   'http://localhost:3000',          // Para desarrollo local
 ];
 
@@ -58,6 +58,11 @@ app.get('/api/health', (req, res) => {
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Error interno del servidor' });
+});
+
+console.log("Rutas registradas en producción:");
+app._router.stack.forEach((r) => {
+  if (r.route?.path) console.log(r.route.path);
 });
 
 // 6. Iniciar servidor (usando el puerto de Railway)
