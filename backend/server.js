@@ -8,34 +8,61 @@ const reservationRoutes = require('./routes/reservationRoutes');
 
 const app = express();
 
-// Middlewares
-app.use(cors());
+// 1. Configuración de CORS (dominios permitidos)
+const allowedOrigins = [
+  'https://sportify-plataforma-deportiva-zeta.vercel.app', // Reemplaza con tu URL de Vercel
+  'http://localhost:3000',          // Para desarrollo local
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Bloqueado por CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true,
+  })
+);
+
+// 2. Middlewares
 app.use(express.json());
-
 app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    next();
-  });
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
 
-// Rutas
+// 3. Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/reservations', reservationRoutes);
 
-// Ruta de prueba
+// 4. Rutas de prueba (para verificar que el backend funciona)
 app.get('/', (req, res) => {
   res.send('¡Backend de Sportify funcionando!');
 });
 
-// Manejo de errores
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Error interno del servidor');
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK',
+    message: 'Conexión exitosa con el backend',
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
-// Iniciar servidor
+// 5. Manejo de errores
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Error interno del servidor' });
+});
+
+// 6. Iniciar servidor (usando el puerto de Railway)
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+  console.log(`URL del backend: https://sportify-plataforma-deportiva-production.up.railway.app`);
 });
