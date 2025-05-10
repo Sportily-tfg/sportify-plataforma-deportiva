@@ -11,7 +11,7 @@ const CalendarPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             if (user) {
-                const res = await fetch('/api/reservations', {
+                const res = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -20,7 +20,7 @@ const CalendarPage = () => {
                 setReservations(data);
             }
 
-            const actRes = await fetch('/api/activities');
+            const actRes = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities');
             const actData = await actRes.json();
             setActivities(actData);
         };

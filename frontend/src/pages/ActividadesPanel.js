@@ -19,7 +19,7 @@ const ActividadesPanel = () => {
         const fetchData = async () => {
             try {
                 // Obtener actividades
-                const response = await fetch('/api/activities');
+                const response = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities');
                 if (!response.ok) throw new Error('Error al cargar actividades');
                 const data = await response.json();
                 setActividades(data);
@@ -60,7 +60,7 @@ const ActividadesPanel = () => {
         }
 
         try {
-            const response = await fetch('/api/reservations', {
+            const response = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
