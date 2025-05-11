@@ -21,7 +21,7 @@ const UsersManagement = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No hay token de autenticación');
   
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -55,7 +55,7 @@ const UsersManagement = () => {
   const handleCreateUser = async (userData) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ const UsersManagement = () => {
   const handleUpdateUser = async (id, userData) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+      const response = await fetch(`https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ const UsersManagement = () => {
   const handleDeleteUser = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+      const response = await fetch(`https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
