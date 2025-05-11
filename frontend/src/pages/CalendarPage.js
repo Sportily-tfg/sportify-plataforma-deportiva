@@ -8,10 +8,15 @@ const CalendarPage = () => {
     const [reservations, setReservations] = useState([]);
     const [activities, setActivities] = useState([]);
 
-    useEffect(() => {
-const fetchData = async () => {
+useEffect(() => {
     const token = localStorage.getItem('token');
-    if (user && token) {
+
+    if (!user || !token) {
+        console.log('Esperando a que user y token estén disponibles');
+        return; // No ejecutar fetch aún
+    }
+
+    const fetchData = async () => {
         try {
             const res = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
                 headers: {
@@ -19,24 +24,27 @@ const fetchData = async () => {
                 }
             });
 
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`);
+            }
+
             const data = await res.json();
             setReservations(data);
         } catch (err) {
             console.error("Error fetching reservations:", err);
         }
-    }
 
-    try {
-        const actRes = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities');
-        const actData = await actRes.json();
-        setActivities(actData);
-    } catch (err) {
-        console.error("Error fetching activities:", err);
-    }
-};
-        fetchData();
-    }, [user]);
+        try {
+            const actRes = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities');
+            const actData = await actRes.json();
+            setActivities(actData);
+        } catch (err) {
+            console.error("Error fetching activities:", err);
+        }
+    };
+
+    fetchData();
+}, [user]);
 
     //Función que determina si una actividad está reservada
     const isReserved = (activityId) => {
