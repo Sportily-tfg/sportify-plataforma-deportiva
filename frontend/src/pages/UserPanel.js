@@ -21,6 +21,7 @@ const UserPanel = () => {
                 });
                 
                 console.log('Datos COMPLETOS recibidos del servidor:', response.data);
+                console.log('Estructura de una reserva:', response.data.reservas[0]); // Debug adicional
                 
                 setData(response.data);
             } catch (err) {
@@ -52,6 +53,12 @@ const UserPanel = () => {
                 return;
             }
 
+            // Si el ID es temporal (comienza con 'temp-'), no intentar cancelar
+            if (typeof reservaId === 'string' && reservaId.startsWith('temp-')) {
+                alert('Esta reserva no puede ser cancelada (ID temporal)');
+                return;
+            }
+
             const id = Number(reservaId);
             if (isNaN(id)) {
                 console.error('Error: ID no es número', reservaId);
@@ -79,11 +86,10 @@ const UserPanel = () => {
                 
                 return {
                     ...prev,
-                    reservas: prev.reservas.map(r => 
-                        (r.id_reserva === id || r.id === id || r.reserva_id === id) 
-                            ? { ...r, estado: 'cancelada' } 
-                            : r
-                    )
+                    reservas: prev.reservas.map(r => {
+                        const currentId = r.id || r.id_reserva || r.reserva_id;
+                        return (currentId === id) ? { ...r, estado: 'cancelada' } : r;
+                    })
                 };
             });
 
@@ -113,37 +119,34 @@ const UserPanel = () => {
                     <p><strong>Nombre:</strong> {data?.usuario.nombre}</p>
                     <p><strong>Email:</strong> {data?.usuario.email}</p>
                     <p><strong>Miembro desde:</strong> {new Date(data?.usuario.fecha_registro).toLocaleDateString()}</p>
-                    <p><strong>Puntos:</strong> {data?.usuario.puntos}</p>
+                    <p><strong>Puntos:</strong> {data?.usuario.puntos || 0}</p>
                 </div>
             </section>
 
             <section className="reservations-section">
                 <h3>Mis reservas</h3>
                 {data?.reservas?.length > 0 ? (
-                    data.reservas.map((reserva) => {
-                        const reservationId = reserva.id_reserva || reserva.id || reserva.reserva_id;
+                    data.reservas.map((reserva, index) => {
+                        // Obtener ID de todas las posibles propiedades
+                        const reservationId = reserva.id || reserva.id_reserva || reserva.reserva_id || `temp-${index}`;
                         
-                        if (reservationId === undefined || reservationId === null) {
-                            console.error('Reserva sin ID válido:', reserva);
-                            return null;
+                        // Si no hay ID válido, mostrar mensaje de debug
+                        if (!reserva.id && !reserva.id_reserva && !reserva.reserva_id) {
+                            console.warn('Reserva sin ID estándar:', reserva);
                         }
 
                         return (
                             <div key={reservationId} className="reservation-card">
-                                <p><strong>ID:</strong> {reservationId}</p>
-                                <p><strong>Actividad:</strong> {reserva.nombre_actividad}</p>
-                                <p><strong>Fecha:</strong> {new Date(reserva.fecha_reserva).toLocaleDateString()}</p>
-                                <p><strong>Estado:</strong> {reserva.estado}</p>
+                                <p><strong>Actividad:</strong> {reserva.nombre_actividad || 'Nombre no disponible'}</p>
+                                <p><strong>Fecha:</strong> {reserva.fecha_reserva ? new Date(reserva.fecha_reserva).toLocaleDateString() : 'Fecha no disponible'}</p>
+                                <p><strong>Estado:</strong> {reserva.estado || 'Estado no disponible'}</p>
                                 
                                 {reserva.estado === 'pendiente' && (
                                     <PrimaryButton 
-                                        onClick={() => {
-                                            console.log('Intentando cancelar reserva ID:', reservationId);
-                                            handleCancelReservation(reservationId);
-                                        }}
+                                        onClick={() => handleCancelReservation(reservationId)}
                                         className="cancel-button"
                                         texto="Cancelar reserva"
-                                        lightText={true}
+                                        $lightText={true}  // Usando prop transitoria
                                     />
                                 )}
                             </div>
