@@ -90,8 +90,6 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error del servidor' });
   }
 });
-
-// Obtener detalles de un usuario específico (mantener el endpoint existente)
 router.get('/:id', authMiddleware, async (req, res) => {
     try {
         if (parseInt(req.params.id) !== req.user.id && req.user.rol !== 'admin') {
@@ -101,9 +99,12 @@ router.get('/:id', authMiddleware, async (req, res) => {
         const usuario = await Usuario.findById(req.params.id);
         if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-        // Obtener reservas
         const reservas = await pool.query(
-            `SELECT a.nombre_actividad, r.fecha_reserva, r.estado
+            `SELECT 
+                r.id_reserva,
+                a.nombre_actividad,
+                r.fecha_reserva,
+                r.estado
              FROM reservas r
              JOIN actividades a ON r.id_actividad = a.id_actividad
              WHERE r.id_usuario = $1`,

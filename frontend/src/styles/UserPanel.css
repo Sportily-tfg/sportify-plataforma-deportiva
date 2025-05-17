@@ -8,6 +8,29 @@
   background-color: #121212;
   min-height: calc(100vh - 80px);
 }
+.reservation-card {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+}
+
+button.danger {
+  background-color: #e74c3c;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #f39c12;
+  color: white;
+  margin-top: 10px;
+}
+
   
   /* Secciones - Tarjetas con bordes sutiles */
   .profile-section,
