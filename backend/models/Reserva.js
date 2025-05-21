@@ -55,7 +55,7 @@ class Reserva {
         return rows[0];
     }
 
-    static async deleteByAdmin(id_reserva) {
+    static async deleteByUser(id_reserva) {
         const { rowCount } = await pool.query(
             `DELETE FROM reservas
              WHERE id_reserva = $1`,

@@ -47,9 +47,8 @@ const reservationController = {
             return res.status(403).json({ error: 'No autorizado para cancelar esta reserva' });
           }
       
-          const reservaCancelada = await Reserva.cancelByUser(id_reserva, id_usuario);
-          await pool.query('DELETE FROM reservas WHERE id_reserva = $1', [id_reserva]);
-          res.json({ mensaje: 'Reserva cancelada y borrada de su sistema correctamente', reserva: reservaCancelada });
+          const reservaCancelada = await Reserva.deleteByUser(id_reserva);
+          res.json({ mensaje: 'Reserva borrada de su sistema correctamente', reserva: reservaCancelada });
         } catch (error) {
           console.error('Error al cancelar reserva:', error);
           res.status(500).json({ error: 'Error del servidor al cancelar la reserva' });
