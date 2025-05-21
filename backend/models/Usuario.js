@@ -40,6 +40,17 @@ class Usuario {
         );
         return rows[0];
     }
+
+    static async updatebyfields(campos, id_usuario, valores) {
+    const { rows } = await pool.query(
+      `UPDATE usuarios 
+       SET ${campos.join(', ')} 
+       WHERE id_usuario = $${id_usuario} 
+       RETURNING id_usuario, nombre, email`,
+      valores
+    );
+        return rows[0];
+    }
 }
 
 module.exports = Usuario;

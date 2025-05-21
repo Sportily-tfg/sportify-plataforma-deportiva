@@ -57,13 +57,7 @@ router.put('/mi-cuenta', authMiddleware, async (req, res) => {
 
     valores.push(id_usuario);
 
-    const result = await pool.query(
-      `UPDATE usuarios 
-       SET ${campos.join(', ')} 
-       WHERE id_usuario = $${idx} 
-       RETURNING id_usuario, nombre, email`,
-      valores
-    );
+    const result = await Usuario.updatebyfields(campos,idx,valores);
 
     res.json({ message: 'Datos actualizados correctamente', usuario: result.rows[0] });
   } catch (err) {
