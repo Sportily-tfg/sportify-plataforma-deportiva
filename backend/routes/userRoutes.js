@@ -31,7 +31,7 @@ router.put('/mi-cuenta', authMiddleware, async (req, res) => {
   console.log('Actualizando cuenta de usuario');
   try {
     const id_usuario = req.user.id;
-    const { nombre, email, password } = req.body;
+    const { nombre, email, contraseña } = req.body;
 
     const campos = [];
     const valores = [];
@@ -47,11 +47,11 @@ router.put('/mi-cuenta', authMiddleware, async (req, res) => {
       valores.push(email);
     }
 
-    if (password) {
+    if (contraseña) {
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      campos.push(`password = $${idx++}`); // Asegúrate de que el nombre de la columna sea correcto
-      valores.push(hashedPassword);
+      const hashedcontraseña = await bcrypt.hash(contraseña, salt);
+      campos.push(`contraseña = $${idx++}`); // Asegúrate de que el nombre de la columna sea correcto
+      valores.push(hashedcontraseña);
     }
 
     if (campos.length === 0) {
@@ -92,14 +92,14 @@ router.delete('/mi-cuenta', authMiddleware, async (req, res) => {
 });
 
 // Añadir ruta para cambiar contraseña
-router.put('/cambiar-password', authMiddleware, async (req, res) => {
+router.put('/cambiar-contraseña', authMiddleware, async (req, res) => {
   try {
     const id_usuario = req.user.id;
-    const { currentPassword, newPassword } = req.body;
+    const { currentcontraseña, newcontraseña } = req.body;
 
     // Verificar contraseña actual
     const { rows } = await pool.query(
-      'SELECT password FROM usuarios WHERE id_usuario = $1',
+      'SELECT contraseña FROM usuarios WHERE id_usuario = $1',
       [id_usuario]
     );
 
@@ -107,7 +107,7 @@ router.put('/cambiar-password', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    const isMatch = await bcrypt.compare(currentPassword, rows[0].password);
+    const isMatch = await bcrypt.compare(currentcontraseña, rows[0].contraseña);
 
     if (!isMatch) {
       return res.status(400).json({ error: 'Contraseña actual incorrecta' });
@@ -115,11 +115,11 @@ router.put('/cambiar-password', authMiddleware, async (req, res) => {
 
     // Actualizar contraseña
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    const hashedcontraseña = await bcrypt.hash(newcontraseña, salt);
 
     await pool.query(
-      'UPDATE usuarios SET password = $1 WHERE id_usuario = $2',
-      [hashedPassword, id_usuario]
+      'UPDATE usuarios SET contraseña = $1 WHERE id_usuario = $2',
+      [hashedcontraseña, id_usuario]
     );
 
     res.json({ message: 'Contraseña actualizada correctamente' });
