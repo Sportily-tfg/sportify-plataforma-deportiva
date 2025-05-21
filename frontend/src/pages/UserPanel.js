@@ -66,7 +66,7 @@ const UserPanel = () => {
   const handleEditSubmit = async () => {
     try {
       const res = await axios.put(
-        "https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/usuarios/mi-cuenta",
+        "https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users/mi-cuenta",
         editForm,
         {
           headers: {
@@ -96,7 +96,7 @@ const UserPanel = () => {
 
     try {
       const res = await axios.put(
-        "https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/usuarios/cambiar-password",
+        "https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users/cambiar-password",
         {
           currentPassword: passwordForm.currentPassword,
           newPassword: passwordForm.newPassword,
@@ -124,7 +124,7 @@ const UserPanel = () => {
     if (!window.confirm("¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer.")) return
     try {
       await axios.delete(
-        "https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/usuarios/mi-cuenta",
+        "https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users/mi-cuenta",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
