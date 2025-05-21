@@ -21,7 +21,7 @@ const CalendarActivities = () => {
                 setLoading(true);
                 
                 // Obtener actividades
-                const activitiesResponse = await fetch('sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities');
+                const activitiesResponse = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities');
                 if (!activitiesResponse.ok) throw new Error('Error al cargar actividades');
                 const activitiesData = await activitiesResponse.json();
                 const parsedActivities = activitiesData.map((act) => ({
@@ -33,7 +33,7 @@ const CalendarActivities = () => {
 
                 // Obtener reservas del usuario si está logueado
                 if (user) {
-                    const reservationsResponse = await fetch('sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
+                    const reservationsResponse = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -90,7 +90,7 @@ const CalendarActivities = () => {
         }
 
         try {
-            const response = await fetch('sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
+            const response = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
