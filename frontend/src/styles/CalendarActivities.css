@@ -1,117 +1,169 @@
+/* src/styles/CalendarActivities.css */
 .calendar-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .calendar-wrapper {
-    display: flex;
-    gap: 30px;
-    margin-top: 20px;
-  }
-  
-  .react-calendar {
-    width: 400px;
-    max-width: 100%;
-    background: #1e1e1e;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 10px;
-    color: white;
-  }
-  
-  .react-calendar__tile {
-    position: relative;
-    padding: 10px;
-    color: white;
-  }
-  
-  .react-calendar__tile--now {
-    background: #2a2a2a;
-  }
-  
-  .activity-dot {
-    position: absolute;
-    bottom: 5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 6px;
-    height: 6px;
-    background: #FF8000;
-    border-radius: 50%;
-  }
-  
-  .activities-list {
-    flex: 1;
-    background: #1e1e1e;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    color: white;
-  }
-  
-  .activity-item {
-    background: #252525;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    border-left: 4px solid #47C7FC; 
-    color: #FAFAFA;
-  }
-  
-  .activity-item h4 {
-    color: #FF8000;
-    margin-bottom: 3px;
-  }
-  
-  .activity-item p {
-    color: #ccc;
-    margin: 5px 0;
-  }
-  
-  .loading, .error {
-    color: white;
-    text-align: center;
-    padding: 20px;
-  }
-
-  .activity-item.reserved {
-    background: #1e3a1e; 
-    border-left: 4px solid #4CAF50;
-    position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.reservation-card {
-  background: #252525;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  border-left: 4px solid #FF8000;
-  color: #FAFAFA;
+.calendar-wrapper {
+  display: flex;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+/* Calendario más grande */
+.react-calendar {
+  width: 700px !important;
+  max-width: 100%;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  font-size: 18px;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.react-calendar__navigation button {
+  min-width: 60px;
+  font-size: 18px;
+  background: none;
+  color: white;
+  padding: 10px;
+}
+
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 10px;
+}
+
+.react-calendar__tile {
+  color: white;
+  height: 100px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   position: relative;
+  transition: all 0.2s;
+}
+
+.react-calendar__tile--now {
+  background: #2a2a2a;
+  border: 1px solid #FF8000;
+}
+
+.react-calendar__tile--active {
+  background: #3a3a3a;
+}
+
+.activity-dot {
+  width: 8px;
+  height: 8px;
+  background: #FF8000;
+  border-radius: 50%;
+  margin-top: 5px;
+}
+
+/* Lista de actividades */
+.activities-list {
+  flex: 1;
+  min-width: 400px;
+  background: #1e1e1e;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #333;
+  color: white;
+  max-height: 700px;
+  overflow-y: auto;
+}
+
+.activities-list h3 {
+  font-size: 22px;
+  margin-bottom: 25px;
+  color: #FF8000;
+}
+
+.activity-item {
+  background: #252525;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  border-left: 5px solid #47C7FC;
+}
+
+.activity-item h4 {
+  color: #FF8000;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.activity-item p {
+  color: #ccc;
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.activity-item.reserved {
+  background: #1e3a1e;
+  border-left: 5px solid #4CAF50;
 }
 
 .activity-item.reserved::after {
   content: '✓ RESERVADA';
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   background: #4CAF50;
   color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
   font-weight: bold;
 }
 
-  @media (max-width: 768px) {
-    .calendar-wrapper {
-      flex-direction: column;
-    }
-    
-    .react-calendar {
-      width: 100%;
-    }
+.loading, .error {
+  color: white;
+  text-align: center;
+  padding: 30px;
+  font-size: 18px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .calendar-wrapper {
+    flex-direction: column;
   }
+  
+  .react-calendar {
+    width: 100% !important;
+    height: 500px;
+  }
+  
+  .activities-list {
+    min-width: 100%;
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .react-calendar {
+    font-size: 16px;
+  }
+  
+  .react-calendar__tile {
+    height: 80px;
+    padding: 5px;
+  }
+}
