@@ -129,6 +129,64 @@ router.get('/:id', authMiddleware, async (req, res) => {
         console.error("Error:", error);
         res.status(500).json({ error: 'Error del servidor' });
     }
-});
+
+    // Editar sus propios datos
+    router.put('/mi-cuenta', authMiddleware, async (req, res) => {
+      try {
+        const id_usuario = req.user.id;
+        const { nombre, email, password } = req.body;
+
+        const campos = [];
+        const valores = [];
+        let idx = 1;
+
+        if (nombre) {
+          campos.push(nombre = $${idx++});
+          valores.push(nombre);
+        }
+
+        if (email) {
+          campos.push(email = $${idx++});
+          valores.push(email);
+        }
+
+        if (password) {
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(password, salt);
+          campos.push(password = $${idx++});
+          valores.push(hashedPassword);
+        }
+
+        if (campos.length === 0) {
+          return res.status(400).json({ error: 'No hay datos para actualizar' });
+        }
+
+        valores.push(id_usuario); // WHERE id_usuario = $idx
+
+        const result = await pool.query(
+          UPDATE usuarios SET ${campos.join(', ')} WHERE id_usuario = $${idx} RETURNING id_usuario, nombre, email,
+          valores
+        );
+
+        res.json({ message: 'Datos actualizados correctamente', usuario: result.rows[0] });
+      } catch (err) {
+        console.error('Error al actualizar datos:', err);
+        res.status(500).json({ error: 'Error del servidor al actualizar usuario' });
+      }
+
+    // Eliminar su propia cuenta
+    router.delete('/mi-cuenta', authMiddleware, async (req, res) => {
+      try {
+        const id_usuario = req.user.id;
+
+        await pool.query('DELETE FROM usuarios WHERE id_usuario = $1', [id_usuario]);
+
+        res.json({ message: 'Cuenta eliminada correctamente' });
+      } catch (err) {
+        console.error('Error al eliminar cuenta:', err);
+        res.status(500).json({ error: 'Error del servidor al eliminar cuenta' });
+      }
+
+    });
 
 module.exports = router;

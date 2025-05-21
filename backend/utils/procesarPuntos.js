@@ -21,7 +21,7 @@ async function procesarReservasFinalizadas() {
       const puntosGanados = reserva.puntos || 0;
 
       await pool.query(
-        `UPDATE reservas SET estado = 'finalizada' WHERE id_reserva = $1`,
+        `DELETE FROM reservas WHERE id_reservas = $1`,
         [reserva.id_reserva]
       );
 
