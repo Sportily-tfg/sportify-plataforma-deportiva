@@ -67,7 +67,13 @@ if (app._router && app._router.stack) {
   });
 }
 
-// 6. Iniciar servidor (usando el puerto de Railway)
+// 6. Ejecutar sistema de puntos al iniciar
+const procesarReservasFinalizadas = require('./utils/procesarPuntos');
+procesarReservasFinalizadas();
+
+setInterval(procesarReservasFinalizadas, 1000 * 60 * 60 * 6); // Cada 6 horas
+
+// 7. Iniciar servidor (usando el puerto de Railway)
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
