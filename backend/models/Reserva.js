@@ -45,12 +45,12 @@ class Reserva {
     }
 
     static async deleteByUser(id_reserva) {
-        const { rowCount } = await pool.query(
+        const { rows } = await pool.query(
             `DELETE FROM reservas
              WHERE id_reserva = $1`,
             [id_reserva]
         );
-        return rowCount > 0;
+        return rows[0];
     }
 }
 

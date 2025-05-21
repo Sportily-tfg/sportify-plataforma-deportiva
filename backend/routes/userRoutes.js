@@ -28,7 +28,7 @@ router.put('/mi-cuenta', authMiddleware, async (req, res) => {
   console.log('Actualizando cuenta de usuario');
   try {
     const id_usuario = req.user.id;
-    const { nombre, email, password } = req.body;
+    const { nombre, email } = req.body;
 
     const campos = [];
     const valores = [];
@@ -42,13 +42,6 @@ router.put('/mi-cuenta', authMiddleware, async (req, res) => {
     if (email) {
       campos.push(`email = $${idx++}`);
       valores.push(email);
-    }
-
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      campos.push(`contraseña = $${idx++}`);
-      valores.push(hashedPassword);
     }
 
     if (campos.length === 0) {

@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const Reserva = require('../models/Reserva');
 
 async function procesarReservasFinalizadas() {
   try {
@@ -19,6 +20,8 @@ async function procesarReservasFinalizadas() {
 
     for (const reserva of reservas) {
       const puntosGanados = reserva.puntos || 0;
+
+      await Reserva.deleteByUser(reserva.id_reserva);
 
       await pool.query(
         `DELETE FROM reservas WHERE id_reservas = $1`,
