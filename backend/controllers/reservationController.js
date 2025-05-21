@@ -48,7 +48,8 @@ const reservationController = {
           }
       
           const reservaCancelada = await Reserva.cancelByUser(id_reserva, id_usuario);
-          res.json({ mensaje: 'Reserva cancelada correctamente', reserva: reservaCancelada });
+          await pool.query('DELETE FROM reservas WHERE id_reserva = $1', [id]);
+          res.json({ mensaje: 'Reserva cancelada y borrada de su sistema correctamente', reserva: reservaCancelada });
         } catch (error) {
           console.error('Error al cancelar reserva:', error);
           res.status(500).json({ error: 'Error del servidor al cancelar la reserva' });
