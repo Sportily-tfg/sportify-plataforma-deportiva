@@ -40,6 +40,7 @@ async function procesarReservasFinalizadas() {
         ]
       );
 
+      
     }
   } catch (error) {
     console.error('Error al procesar puntos:', error);
