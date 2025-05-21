@@ -197,6 +197,7 @@ const handleDeleteAccount = async () => {
                     <p>No tienes reservas aún.</p>
                 )}
             </section>
+            
 
             <div className="user-panel-section">
   <h2>Editar mis datos</h2>
