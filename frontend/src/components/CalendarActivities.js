@@ -24,7 +24,12 @@ const CalendarActivities = () => {
                 const activitiesResponse = await fetch('/api/activities');
                 if (!activitiesResponse.ok) throw new Error('Error al cargar actividades');
                 const activitiesData = await activitiesResponse.json();
-                setActivities(activitiesData);
+                const parsedActivities = activitiesData.map((act) => ({
+                    ...act,
+                    fecha: act.fecha ? new Date(act.fecha) : null
+                }));
+                setActivities(parsedActivities);
+
 
                 // Obtener reservas del usuario si está logueado
                 if (user) {
