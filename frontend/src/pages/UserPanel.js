@@ -42,6 +42,56 @@ const UserPanel = () => {
         }
     }, [navigate, user, data]);
 
+    const [editForm, setEditForm] = useState({
+  nombre: '',
+  email: '',
+  password: '',
+});
+
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  setEditForm((prev) => ({ ...prev, [name]: value }));
+};
+
+const handleEditSubmit = async () => {
+  try {
+    const res = await axios.put(
+      'https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/usuarios/mi-cuenta',
+      editForm,
+      {
+        headers: {
+          Authorization: Bearer ${localStorage.getItem('token')},
+        },
+      }
+    );
+    alert(res.data.message || 'Datos actualizados');
+    window.location.reload();
+  } catch (err) {
+    console.error(err);
+    alert('Error al actualizar datos');
+  }
+};
+
+const handleDeleteAccount = async () => {
+  if (!window.confirm('¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer.')) return;
+  try {
+    await axios.delete(
+      'https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/usuarios/mi-cuenta',
+      {
+        headers: {
+          Authorization: Bearer ${localStorage.getItem('token')},
+        },
+      }
+    );
+    localStorage.clear();
+    alert('Cuenta eliminada');
+    navigate('/');
+  } catch (err) {
+    console.error(err);
+    alert('Error al eliminar cuenta');
+  }
+};
+
     const handleCancelReservation = async (id_reserva) => {
 
         if (!id_reserva) {
@@ -147,6 +197,37 @@ const UserPanel = () => {
                     <p>No tienes reservas aún.</p>
                 )}
             </section>
+
+            <div className="user-panel-section">
+  <h2>Editar mis datos</h2>
+  <input
+    type="text"
+    placeholder="Nuevo nombre"
+    name="nombre"
+    value={editForm.nombre}
+    onChange={handleInputChange}
+  />
+  <input
+    type="email"
+    placeholder="Nuevo email"
+    name="email"
+    value={editForm.email}
+    onChange={handleInputChange}
+  />
+  <input
+    type="password"
+    placeholder="Nueva contraseña"
+    name="password"
+    value={editForm.password}
+    onChange={handleInputChange}
+  />
+  <PrimaryButton onClick={handleEditSubmit}>Guardar cambios</PrimaryButton>
+</div>
+
+<div className="user-panel-section danger">
+  <h3>Eliminar cuenta</h3>
+  <PrimaryButton onClick={handleDeleteAccount}>Eliminar mi cuenta</PrimaryButton>
+</div>
 
             <section className="rewards-section">
                 <h3>Recompensas</h3>

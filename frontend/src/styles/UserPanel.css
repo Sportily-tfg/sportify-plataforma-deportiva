@@ -16,6 +16,25 @@
   background-color: #f9f9f9;
 }
 
+.user-panel-section {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+}
+
+.user-panel-section input {
+  display: block;
+  margin: 0.5rem 0;
+  padding: 0.6rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.user-panel-section.danger {
+  background-color: #fff0f0;
+  border: 1px solid #e99;
+}
+
 button.danger {
   background-color: #e74c3c;
   color: white;
