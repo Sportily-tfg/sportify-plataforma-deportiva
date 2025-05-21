@@ -42,9 +42,9 @@ const UserPanel = () => {
         }
     }, [navigate, user, data]);
 
-    const [editForm, setEditForm] = useState({
-  nombre: '',
-  email: '',
+const [editForm, setEditForm] = useState({
+  nombre: user?.nombre || '',
+  email: user?.email || '',
   password: '',
 });
 
@@ -60,7 +60,7 @@ const handleEditSubmit = async () => {
       editForm,
       {
         headers: {
-          Authorization: Bearer ${localStorage.getItem('token')},
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       }
     );
@@ -79,7 +79,7 @@ const handleDeleteAccount = async () => {
       'https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/usuarios/mi-cuenta',
       {
         headers: {
-          Authorization: Bearer ${localStorage.getItem('token')},
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       }
     );
