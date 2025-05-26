@@ -3,6 +3,8 @@ import CalendarActivities from '../components/CalendarActivities';
 import '../styles/CalendarPage.css';
 import { useAuth } from '../context/AuthContext';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const CalendarPage = () => {
     const { user } = useAuth();
     const [reservations, setReservations] = useState([]);
@@ -18,7 +20,7 @@ useEffect(() => {
 
     const fetchData = async () => {
         try {
-            const res = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
+            const res = await fetch(`${API_URL}/api/reservations`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -35,7 +37,7 @@ useEffect(() => {
         }
 
         try {
-            const actRes = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities');
+            const actRes = await fetch(`${API_URL}/api/activities`);
             const actData = await actRes.json();
             setActivities(actData);
         } catch (err) {

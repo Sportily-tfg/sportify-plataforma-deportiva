@@ -5,6 +5,8 @@ import LightboxDetalles from '../components/LightboxDetalles';
 import '../styles/ActividadesPanel.css';
 import { useAuth } from '../context/AuthContext';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const ActividadesPanel = () => {
     const { user } = useAuth();
     const [actividadSeleccionada, setActividadSeleccionada] = useState(null);
@@ -19,7 +21,7 @@ const ActividadesPanel = () => {
         const fetchData = async () => {
             try {
                 // Obtener actividades
-                const response = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities');
+                const response = await fetch(`${API_URL}/api/activities`);
                 if (!response.ok) throw new Error('Error al cargar actividades');
                 const data = await response.json();
                 setActividades(data);
@@ -60,7 +62,7 @@ const ActividadesPanel = () => {
         }
 
         try {
-            const response = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
+            const response = await fetch(`${API_URL}/api/reservations`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -134,4 +136,4 @@ const ActividadesPanel = () => {
     );
 };
 
-export default ActividadesPanel;
+export default ActividadesPanel; 

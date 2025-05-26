@@ -6,6 +6,8 @@ import axios from "axios"
 import "../styles/UserPanel.css"
 import PrimaryButton from "../components/buttons/PrimaryButton"
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const UserPanel = () => {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -24,8 +26,8 @@ const UserPanel = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users/${user.id}`,
+        const response = await axios.get( 
+          `${API_URL}/api/users/${user.id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -66,7 +68,7 @@ const UserPanel = () => {
   const handleEditSubmit = async () => {
     try {
       const res = await axios.put(
-        "https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users/mi-cuenta",
+        `${API_URL}/api/users/mi-cuenta`,
         editForm,
         {
           headers: {
@@ -96,7 +98,7 @@ const UserPanel = () => {
 
     try {
       const res = await axios.put(
-        "https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users/cambiar-password",
+        `${API_URL}/api/users/cambiar-password`,
         {
           currentPassword: passwordForm.currentPassword,
           newPassword: passwordForm.newPassword,
@@ -124,7 +126,7 @@ const UserPanel = () => {
     if (!window.confirm("¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer.")) return
     try {
       await axios.delete(
-        "https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/users/mi-cuenta",
+        `${API_URL}/api/users/mi-cuenta`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -148,7 +150,7 @@ const UserPanel = () => {
 
     try {
       const response = await axios.delete(
-        `https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations/cancelar/${id_reserva}`,
+         `${API_URL}/api/reservations/cancelar/${id_reserva}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -173,7 +175,7 @@ const UserPanel = () => {
 
     try {
       await axios.delete(
-        `https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations/admin/eliminar/${id_reserva}`,
+         `${API_URL}/api/reservations/admin/eliminar/${id_reserva}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

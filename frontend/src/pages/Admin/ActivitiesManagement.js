@@ -3,6 +3,7 @@ import PrimaryButton from '../../components/buttons/PrimaryButton';
 import SecondaryButton from '../../components/buttons/SecondaryButton';
 import '../../styles/AdminComponents.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
 
 const ActivitiesManagement = () => {
     const [activities, setActivities] = useState([]);
@@ -28,8 +29,8 @@ const ActivitiesManagement = () => {
     const fetchActivities = async (categoria = null) => {
         try {
             const url = categoria 
-            ? `https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities?categoria=${encodeURIComponent(categoria)}`
-            : 'https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities';
+            ? `${API_URL}/api/activities?categoria=${encodeURIComponent(categoria)}`
+            : `${API_URL}/api/activities`;
             
             const response = await fetch(url);
             const data = await response.json();
@@ -49,7 +50,7 @@ const ActivitiesManagement = () => {
         
         try {
             const token = localStorage.getItem('token');
-            const url = isEditing ? `https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities/${isEditing}` : 'https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities';
+            const url = isEditing ? `${API_URL}/api/activities/${isEditing}` : `${API_URL}/api/activities`;
             const method = isEditing ? 'PUT' : 'POST';
 
             const response = await fetch(url, {
@@ -103,7 +104,7 @@ const ActivitiesManagement = () => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities/${id}`, {
+            const response = await fetch(`${API_URL}/api/activities/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`

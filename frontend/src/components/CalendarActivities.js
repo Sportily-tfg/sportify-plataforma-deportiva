@@ -5,6 +5,8 @@ import PrimaryButton from '../components/buttons/PrimaryButton';
 import { useAuth } from '../context/AuthContext';
 import '../styles/CalendarActivities.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const CalendarActivities = () => {
     const [date, setDate] = useState(new Date());
     const [activities, setActivities] = useState([]);
@@ -21,14 +23,14 @@ const CalendarActivities = () => {
                 setLoading(true);
                 
                 // Obtener actividades
-                const activitiesResponse = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/activities');
+                const activitiesResponse = await fetch(`${API_URL}/api/activities`);
                 if (!activitiesResponse.ok) throw new Error('Error al cargar actividades');
                 const activitiesData = await activitiesResponse.json();
                 setActivities(activitiesData);
 
                 // Obtener reservas del usuario si está logueado
                 if (user) {
-                    const reservationsResponse = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
+                    const reservationsResponse = await fetch(`${API_URL}/api/reservations`, {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -85,7 +87,7 @@ const CalendarActivities = () => {
         }
 
         try {
-            const response = await fetch('https://sportify-plataforma-deportiva-production-7eec.up.railway.app/api/reservations', {
+            const response = await fetch(`${API_URL}/api/reservations`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
