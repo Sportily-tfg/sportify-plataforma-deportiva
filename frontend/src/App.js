@@ -12,6 +12,7 @@ import PublicRoute from "./components/PublicRoute";
 import Navbar from "./components/navbar/Navbar";
 import UserPanel from "./pages/UserPanel";
 import AdminPanel from "./pages/Admin/AdminPanel";
+import Footer from "./components/Footer";
 
 function App() {
   const { loading } = useAuth(); // Ahora useAuth está definido
@@ -89,6 +90,7 @@ function App() {
             />
           </Routes>
         </div>
+        <Footer />
       </Router>
     </AuthProvider>
   );
