@@ -1,88 +1,166 @@
+/* ContactPage.css - Versión corregida para evitar desbordamiento */
+
 .contact-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #fafafa;
-    padding: 20px;
+  min-height: 100vh;
+  background-color: #121212;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  padding-top: 100px;
+  color: #fafafa;
+  box-sizing: border-box; /* Añadido para consistencia */
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem; /* Añadido padding lateral */
+  box-sizing: border-box; /* Importante para el cálculo del ancho */
+}
+
+.form-title {
+  font-size: 2.5rem;
+  color: #FF8000;
+  margin-bottom: 1rem;
+  position: relative;
+  text-align: center;
+  width: 100%; /* Aseguramos que ocupe el ancho completo */
+}
+
+.form-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: #FF8000;
+}
+
+.form-subtitle {
+  color: #b0b0b0;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  font-weight: 300;
+  text-align: center;
+  width: 100%; /* Aseguramos que ocupe el ancho completo */
+}
+
+/* Contenedor del formulario - corregido para evitar desbordamiento */
+.form-container {
+  width: 100%;
+  background: #1e1e1e;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #333;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  box-sizing: border-box; /* Esto es clave para el cálculo del ancho */
+}
+
+/* Estructura del formulario */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%; /* Aseguramos que ocupe el ancho completo */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%; /* Aseguramos que ocupe el ancho completo */
+}
+
+.form-group label {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Campos de entrada - corregidos para no desbordar */
+.form-group input,
+.form-group textarea {
+  width: calc(100% - 1.6rem); /* Restamos el padding horizontal */
+  padding: 0.8rem;
+  background-color: #252525;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s;
+  box-sizing: border-box; /* Esto es esencial */
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 150px;
+  width: calc(100% - 1.6rem); /* Aseguramos consistencia con los inputs */
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #FF8000;
+  background-color: #2d2d2d;
+}
+
+/* Botón de enviar */
+.form-submit {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  width: 100%; /* Aseguramos que ocupe el ancho completo */
+}
+
+/* Mensajes de estado - consistentes con Login.css */
+.alert {
+  padding: 0.8rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.alert-success {
+  color: #4CAF50;
+  background-color: rgba(76, 175, 80, 0.1);
+  border-left: 3px solid #4CAF50;
+}
+
+.alert-error {
+  color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.1);
+  border-left: 3px solid #ff6b6b;
+}
+
+/* Responsive - ajustes adicionales */
+@media (max-width: 768px) {
+  .contact-page {
+    padding: 1rem;
+    padding-top: 80px;
+  }
+  
+  .form-title {
+    font-size: 2rem;
   }
   
   .form-container {
-    width: 100%;
-    max-width: 500px;
-    background: #ffffff;
-    padding: 32px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
-    color: #333333;
-    margin: 0 auto;
+    padding: 1.5rem;
   }
-  
-  /* Estilos para el título */
-  .form-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #212121;
-    text-align: center;
-    margin-bottom: 16px;
+
+  /* Ajuste adicional para móviles muy pequeños */
+  .form-group input,
+  .form-group textarea {
+    width: calc(100% - 1.2rem); /* Reducimos el padding en móviles */
+    padding: 0.6rem;
   }
-  
-  /* Estilos para el subtítulo */
-  .form-subtitle {
-    font-size: 14px;
-    color: #555555;
-    text-align: center;
-    margin-bottom: 24px;
-  }
-  
-  .form-container .form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .form-container .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-  }
-  
-  .form-container .form-group label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #555555;
-    text-align: left;
-  }
-  
-  .form-container .form-group input,
-  .form-container .form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #dddddd;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #333333;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease;
-    box-sizing: border-box;
-  }
-  
-  .form-container .form-group input:focus,
-  .form-container .form-group textarea:focus {
-    outline: none;
-    border-color: #47C7FC;
-    background-color: #ffffff;
-  }
-  
-  .form-container .form-group textarea {
-    resize: vertical;
-    min-height: 120px;
-  }
-  
-  .form-container .form-submit {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
+}

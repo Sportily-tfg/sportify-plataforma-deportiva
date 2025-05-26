@@ -5,6 +5,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const activityRoutes = require('./routes/activityRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
+const contactRoutes = require('./routes/contactRoutes');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/reservations', reservationRoutes);
+app.use('/api', contactRoutes);
 
 // 4. Rutas de prueba (para verificar que el backend funciona)
 app.get('/', (req, res) => {

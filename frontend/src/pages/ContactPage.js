@@ -1,89 +1,51 @@
 import React, { useState } from 'react';
-import PrimaryButton from '../components/buttons/PrimaryButton'; // Importa tu SendButton
-import '../styles/Login.css'; // Importa el archivo CSS
+import ContactForm from '../components/contact/ContactForm';
+import '../styles/ContactPage.css';
 
 const ContactPage = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
 
-  // Maneja los cambios en los campos del formulario
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
+  const handleSubmit = async (formData) => {
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/contact`, {
 
-  // Maneja el envío del formulario
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Datos del formulario:', formData);
-    alert('Mensaje enviado con éxito');
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setSubmitStatus({ success: true, message: 'Mensaje enviado con éxito' });
+      } else {
+        setSubmitStatus({ success: false, message: data.error || 'Error al enviar el mensaje' });
+      }
+    } catch (error) {
+      setSubmitStatus({ success: false, message: 'Error de conexión con el servidor' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="login-page">
-      <div className="login-section">
-        {/* Título "Contáctanos" */}
-        <h1 className="login-title">Contáctanos</h1>
-        {/* Subtítulo o descripción */}
-        <p className="login-slogan">
+    <div className="contact-page">
+      <div className="form-wrapper">
+        <h1 className="form-title">Contáctanos</h1>
+        <p className="form-subtitle">
           ¿Tienes alguna pregunta o comentario? ¡Estamos aquí para ayudarte!
         </p>
 
-        <form onSubmit={handleSubmit}>
-          {/* Campo para Nombre y Apellidos */}
-          <div className="login-inputs">
-            <input
-              required
-              placeholder='Nombre y apellidos'
-              name="name"
-              id="name"
-              type="text"
-              className='login-input'
-              value={formData.name}
-              onChange={handleChange}
-            />
+        {submitStatus && (
+          <div className={`alert ${submitStatus.success ? 'alert-success' : 'alert-error'}`}>
+            {submitStatus.message}
           </div>
+        )}
 
-          {/* Campo para Correo Electrónico */}
-          <div className="login-inputs">
-            <input
-              required
-              placeholder='Correo Electrónico'
-              name="email"
-              id="email"
-              type="email"
-              className='login-input'
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Campo para el Mensaje */}
-          <div className="login-inputs">
-            <textarea
-              required
-              placeholder='Mensaje'
-              name="message"
-              id="message"
-              className='login-input'
-              cols={50}
-              rows={10}
-              value={formData.message}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Botón de Enviar */}
-          <div style={{ marginTop: '1.5rem' }}>
-            <PrimaryButton type="submit" texto="Enviar" lightText={ true }/>
-          </div>
-        </form>
+        <ContactForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
       </div>
     </div>
   );
