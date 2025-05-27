@@ -109,14 +109,6 @@ const AboutPage = () => {
           </StepsContainer>
         </HowItWorks>
 
-        <FAQSection>
-          <SectionTitle>Preguntas Frecuentes</SectionTitle>
-          <FAQItem>
-            <FAQQuestion>¿Cómo cancelo una reserva?</FAQQuestion>
-            <FAQAnswer>Puedes cancelar desde tu perfil.</FAQAnswer>
-          </FAQItem>
-        </FAQSection>
-
         <CTASection>
           <CTATitle>¡Únete a la comunidad Sportify!</CTATitle>
           <PrimaryButton texto="Regístrate Gratis" lightText={true} onClick={() => navigate('/register')} />
@@ -314,31 +306,6 @@ const StepIcon = styled.div`
 
 const StepText = styled.p`
   font-size: 1.1rem;
-`;
-
-/* FAQ */
-const FAQSection = styled.section`
-  margin: 5rem 0;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-`;
-
-const FAQItem = styled.div`
-  margin-bottom: 1rem;
-  background: #1E1E1E;
-  padding: 1.5rem;
-  border-radius: 8px;
-`;
-
-const FAQQuestion = styled.h4`
-  color: #FF8000;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-`;
-
-const FAQAnswer = styled.p`
-  color: #CCCCCC;
 `;
 
 /* CTA */

@@ -14,10 +14,14 @@ const ContactForm = ({ onSubmit, isSubmitting }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const result = await onSubmit(formData);
+  if (result?.success) {
+    setFormData({ name: '', email: '', message: '' });
+  }
+};
+
 
   return (
     <StyledWrapper>
