@@ -52,7 +52,7 @@ router.put('/mi-cuenta', authMiddleware, async (req, res) => {
 
     const result = await Usuario.updatebyfields(campos,idx,valores);
 
-    res.json({ message: 'Datos actualizados correctamente', usuario: result.rows[0] });
+    res.json({ message: 'Datos actualizados correctamente', usuario:nombre});
   } catch (err) {
     console.error('Error al actualizar datos:', err);
     res.status(500).json({ error: 'Error del servidor al actualizar usuario' });
