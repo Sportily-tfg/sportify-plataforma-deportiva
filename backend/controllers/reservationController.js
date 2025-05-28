@@ -36,24 +36,45 @@ const reservationController = {
         }
     },
 
-    cancelReservation: async (req, res) => {
-        try {
-          const { id_reserva } = req.params;
-          const id_usuario = req.user.id;
-      
-          const reserva = await Reserva.findById(id_reserva);
-          if (!reserva || reserva.id_usuario !== id_usuario) {
-            console.log('No autorizado:', reserva, 'Usuario:', id_usuario);
-            return res.status(403).json({ error: 'No autorizado para cancelar esta reserva' });
-          }
-      
-          const reservaCancelada = await Reserva.deleteByUser(id_reserva);
-          res.json({ mensaje: 'Reserva borrada de su sistema correctamente', reserva: reservaCancelada });
-        } catch (error) {
-          console.error('Error al cancelar reserva:', error);
-          res.status(500).json({ error: 'Error del servidor al cancelar la reserva' });
+cancelReservation: async (req, res) => {
+    try {
+        const { id_reserva } = req.params;
+        const id_usuario = req.user.id;
+
+        console.log(`Intentando cancelar reserva ${id_reserva} para usuario ${id_usuario}`); // Log para depuración
+
+        const reserva = await Reserva.findById(id_reserva);
+        if (!reserva) {
+            console.log('Reserva no encontrada');
+            return res.status(404).json({ error: 'Reserva no encontrada' });
         }
-      }
+
+        if (reserva.id_usuario !== id_usuario) {
+            console.log('Usuario no autorizado');
+            return res.status(403).json({ error: 'No tienes permiso para cancelar esta reserva' });
+        }
+
+        const reservaCancelada = await Reserva.cancel(id_reserva);
+        if (!reservaCancelada) {
+            console.log('No se pudo actualizar la reserva');
+            return res.status(500).json({ error: 'No se pudo cancelar la reserva' });
+        }
+
+        console.log('Reserva cancelada exitosamente:', reservaCancelada);
+        res.json({
+            success: true,
+            mensaje: 'Reserva cancelada correctamente',
+            reserva: reservaCancelada
+        });
+
+    } catch (error) {
+        console.error('Error en cancelReservation:', error);
+        res.status(500).json({ 
+            error: 'Error del servidor',
+            detalle: error.message 
+        });
+    }
+}
       ,
 
     deleteReservationByAdmin: async (req, res) => {

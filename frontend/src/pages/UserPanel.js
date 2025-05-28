@@ -1,99 +1,92 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import axios from "axios"
-import "../styles/UserPanel.css"
-import PrimaryButton from "../components/buttons/PrimaryButton"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "../styles/UserPanel.css";
+import PrimaryButton from "../components/buttons/PrimaryButton";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const UserPanel = () => {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const navigate = useNavigate()
-  const user = JSON.parse(localStorage.getItem("user"))
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  const [isEditing, setIsEditing] = useState(false)
-  const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
-  })
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get( 
-          `${API_URL}/api/users/${user.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+        const response = await axios.get(`${API_URL}/api/users/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        )
-        setData(response.data)
+        });
+        setData(response.data);
       } catch (err) {
-        setError(err.response?.data?.error || "Error al cargar datos")
+        setError(err.response?.data?.error || "Error al cargar datos");
         if (err.response?.status === 401) {
-          localStorage.removeItem("token")
-          localStorage.removeItem("user")
-          navigate("/login")
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/login");
         }
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
     if (user && !data) {
-      fetchData()
+      fetchData();
     } else if (!user) {
-      navigate("/login")
+      navigate("/login");
     }
-  }, [navigate, user, data])
+  }, [navigate, user, data]);
 
   const [editForm, setEditForm] = useState({
     nombre: user?.nombre || "",
     email: user?.email || "",
     password: "",
-  })
+  });
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setEditForm((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleEditSubmit = async () => {
     try {
-      const res = await axios.put(
-        `${API_URL}/api/users/mi-cuenta`,
-        editForm,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      const res = await axios.put(`${API_URL}/api/users/mi-cuenta`, editForm, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      )
-      alert(res.data.message || "Datos actualizados")
-      window.location.reload()
+      });
+      alert(res.data.message || "Datos actualizados");
+      window.location.reload();
     } catch (err) {
-      console.error(err)
-      alert("Error al actualizar datos")
+      console.error(err);
+      alert("Error al actualizar datos");
     }
-  }
+  };
 
   const handlePasswordChange = (e) => {
-    const { name, value } = e.target
-    setPasswordForm((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setPasswordForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handlePasswordSubmit = async () => {
     // Validate passwords match
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      alert("Las contraseñas nuevas no coinciden")
-      return
+      alert("Las contraseñas nuevas no coinciden");
+      return;
     }
 
     try {
@@ -107,93 +100,76 @@ const UserPanel = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        },
-      )
-      alert(res.data.message || "Contraseña actualizada correctamente")
+        }
+      );
+      alert(res.data.message || "Contraseña actualizada correctamente");
       setPasswordForm({
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
-      })
-      setShowPasswordModal(false)
+      });
+      setShowPasswordModal(false);
     } catch (err) {
-      console.error(err)
-      alert(err.response?.data?.error || "Error al actualizar la contraseña")
+      console.error(err);
+      alert(err.response?.data?.error || "Error al actualizar la contraseña");
     }
-  }
+  };
 
   const handleDeleteAccount = async () => {
-    if (!window.confirm("¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer.")) return
-    try {
-      await axios.delete(
-        `${API_URL}/api/users/mi-cuenta`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
+    if (
+      !window.confirm(
+        "¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer."
       )
-      localStorage.clear()
-      alert("Cuenta eliminada")
-      navigate("/")
+    )
+      return;
+    try {
+      await axios.delete(`${API_URL}/api/users/mi-cuenta`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      localStorage.clear();
+      alert("Cuenta eliminada");
+      navigate("/");
     } catch (err) {
-      console.error(err)
-      alert("Error al eliminar cuenta")
+      console.error(err);
+      alert("Error al eliminar cuenta");
     }
-  }
+  };
 
   const handleCancelReservation = async (id_reserva) => {
-    if (!id_reserva) {
-      alert("Error: ID de reserva no válido")
-      return
+    if (!window.confirm("¿Estás seguro de cancelar esta reserva?")) {
+      return;
     }
 
     try {
-      const response = await axios.delete(
-         `${API_URL}/api/reservations/cancelar/${id_reserva}`,
+      const response = await axios.put(
+        `${API_URL}/api/reservations/cancelar/${id_reserva}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        },
-      )
+        }
+      );
 
-      setData((prev) => ({
-        ...prev,
-        reservas: prev.reservas.map((r) => (r.id_reserva === id_reserva ? { ...r, estado: "cancelada" } : r)),
-      }))
+      if (response.data && response.data.reserva) {
+        setData((prev) => ({
+          ...prev,
+          reservas: prev.reservas.map((r) =>
+            r.id_reserva === id_reserva ? { ...r, estado: "cancelada" } : r
+          ),
+        }));
+        alert("Reserva cancelada exitosamente");
+      }
     } catch (error) {
-      alert("No se pudo cancelar la reserva")
+      console.error("Error detallado:", error);
+      alert(error.response?.data?.error || "Error al cancelar reserva");
     }
-  }
+  };
 
-  const handleDeleteReservation = async (id_reserva) => {
-    if (!id_reserva) {
-      alert("Error: ID no válido")
-      return
-    }
-
-    try {
-      await axios.delete(
-         `${API_URL}/api/reservations/admin/eliminar/${id_reserva}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      )
-
-      setData((prev) => ({
-        ...prev,
-        reservas: prev.reservas.filter((r) => r.id_reserva !== id_reserva),
-      }))
-    } catch (error) {
-      alert("No se pudo eliminar la reserva")
-    }
-  }
-
-  if (loading) return <div className="user-panel">Cargando...</div>
-  if (error) return <div className="user-panel error-message">{error}</div>
+  if (loading) return <div className="user-panel">Cargando...</div>;
+  if (error) return <div className="user-panel error-message">{error}</div>;
 
   return (
     <div className="user-panel">
@@ -209,19 +185,29 @@ const UserPanel = () => {
             <strong>Email:</strong> {data?.usuario.email}
           </p>
           <p>
-            <strong>Miembro desde:</strong> {new Date(data?.usuario.fecha_registro).toLocaleDateString()}
+            <strong>Miembro desde:</strong>{" "}
+            {new Date(data?.usuario.fecha_registro).toLocaleDateString()}
           </p>
           <p>
             <strong>Puntos:</strong> {data?.usuario.puntos || 0}
           </p>
           <div className="button-group">
-            <button className="edit-btn light-text" onClick={() => setIsEditing(!isEditing)}>
+            <button
+              className="edit-btn light-text"
+              onClick={() => setIsEditing(!isEditing)}
+            >
               {isEditing ? "Cancelar" : "Editar datos"}
             </button>
-            <button className="edit-btn light-text" onClick={() => setShowPasswordModal(true)}>
+            <button
+              className="edit-btn light-text"
+              onClick={() => setShowPasswordModal(true)}
+            >
               Cambiar contraseña
             </button>
-            <button className="danger-btn light-text" onClick={handleDeleteAccount}>
+            <button
+              className="danger-btn light-text"
+              onClick={handleDeleteAccount}
+            >
               Eliminar cuenta
             </button>
           </div>
@@ -245,7 +231,9 @@ const UserPanel = () => {
             value={editForm.email}
             onChange={handleInputChange}
           />
-          <PrimaryButton onClick={handleEditSubmit}>Guardar cambios</PrimaryButton>
+          <PrimaryButton onClick={handleEditSubmit}>
+            Guardar cambios
+          </PrimaryButton>
         </div>
       )}
 
@@ -253,7 +241,11 @@ const UserPanel = () => {
         <h3>Mis reservas</h3>
         {data?.reservas?.length > 0 ? (
           data.reservas.map((reserva, index) => {
-            const reservationId = reserva.id_reserva || reserva.id || reserva.reserva_id || `temp-${index}`
+            const reservationId =
+              reserva.id_reserva ||
+              reserva.id ||
+              reserva.reserva_id ||
+              `temp-${index}`;
 
             return (
               <div key={reservationId} className="reservation-card">
@@ -261,27 +253,22 @@ const UserPanel = () => {
                   <strong>Actividad:</strong> {reserva.nombre_actividad}
                 </p>
                 <p>
-                  <strong>Fecha:</strong> {new Date(reserva.fecha_reserva).toLocaleDateString()}
+                  <strong>Fecha:</strong>{" "}
+                  {new Date(reserva.fecha_reserva).toLocaleDateString()}
                 </p>
                 <p>
                   <strong>Estado:</strong> {reserva.estado}
                 </p>
 
-                {user.rol === "admin" ? (
-                  <button className="danger light-text" onClick={() => handleDeleteReservation(reservationId)}>
-                    Eliminar (Admin)
-                  </button>
-                ) : (
-                  reserva.estado !== "cancelada" && (
-                    <PrimaryButton
-                      onClick={() => handleCancelReservation(reservationId)}
-                      texto="Cancelar reserva"
-                      className="cancel-button"
-                    />
-                  )
+                {reserva.estado !== "cancelada" && (
+                  <PrimaryButton
+                    onClick={() => handleCancelReservation(reservationId)}
+                    texto="Cancelar reserva"
+                    className="cancel-button"
+                  />
                 )}
               </div>
-            )
+            );
           })
         ) : (
           <p>No tienes reservas aún.</p>
@@ -316,10 +303,16 @@ const UserPanel = () => {
                 onChange={handlePasswordChange}
               />
               <div className="modal-buttons">
-                <button className="edit-btn light-text" onClick={handlePasswordSubmit}>
+                <button
+                  className="edit-btn light-text"
+                  onClick={handlePasswordSubmit}
+                >
                   Guardar contraseña
                 </button>
-                <button className="cancel-modal-btn light-text" onClick={() => setShowPasswordModal(false)}>
+                <button
+                  className="cancel-modal-btn light-text"
+                  onClick={() => setShowPasswordModal(false)}
+                >
                   Cancelar
                 </button>
               </div>
@@ -336,7 +329,10 @@ const UserPanel = () => {
               <p>
                 <strong>{recompensa.nombre_recompensa}</strong>
               </p>
-              <p>Canjeado: {new Date(recompensa.fecha_canje).toLocaleDateString()}</p>
+              <p>
+                Canjeado:{" "}
+                {new Date(recompensa.fecha_canje).toLocaleDateString()}
+              </p>
             </div>
           ))
         ) : (
@@ -344,8 +340,7 @@ const UserPanel = () => {
         )}
       </section>
     </div>
-  )
-}
+  );
+};
 
-
-export default UserPanel
+export default UserPanel;

@@ -44,14 +44,16 @@ class Reserva {
         return rows[0];
     }
 
-    static async deleteByUser(id_reserva) {
-        const { rows } = await pool.query(
-            `DELETE FROM reservas
-             WHERE id_reserva = $1`,
-            [id_reserva]
-        );
-        return rows[0];
-    }
+static async cancel(id_reserva) {
+    const { rows } = await pool.query(
+        `UPDATE reservas 
+         SET estado = 'cancelada' 
+         WHERE id_reserva = $1
+         RETURNING *`,
+        [id_reserva]
+    );
+    return rows[0] || null; // Asegura que devuelva null si no encuentra la reserva
+}
 }
 
 module.exports = Reserva;

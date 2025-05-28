@@ -6,7 +6,7 @@ const isAdmin = require('../middleware/isAdmin');
 
 router.post('/', authMiddleware, reservationController.createReservation);
 router.get('/', authMiddleware, reservationController.getUserReservations);
-router.delete('/cancelar/:id_reserva', authMiddleware, reservationController.cancelReservation);
+router.put('/cancelar/:id_reserva', authMiddleware, reservationController.cancelReservation);
 router.delete('/admin/eliminar/:id_reserva', authMiddleware, isAdmin, reservationController.deleteReservationByAdmin);
 
 
