@@ -6,15 +6,21 @@ import axios from "axios";
 import "../styles/UserPanel.css";
 import PrimaryButton from "../components/buttons/PrimaryButton";
 
+// URL base de la API obtenida de las variables de entorno
 const API_URL = process.env.REACT_APP_API_URL;
 
+// Componente principal del panel de usuario
 const UserPanel = () => {
+  // Estados para manejar los datos del usuario, carga y errores
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  // Obtiene los datos del usuario desde el localStorage
   const user = JSON.parse(localStorage.getItem("user"));
 
+  // Estados para manejar la edcion de datos y el modal de contraseña
   const [isEditing, setIsEditing] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
@@ -23,9 +29,11 @@ const UserPanel = () => {
     confirmPassword: "",
   });
 
+  // Efecto para cargar los datos del usuario al mnontar el componente
   useEffect(() => {
     const fetchData = async () => {
       try {
+        //Peticion GET para obtener los datos del usuario
         const response = await axios.get(`${API_URL}/api/users/${user.id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -33,6 +41,7 @@ const UserPanel = () => {
         });
         setData(response.data);
       } catch (err) {
+        // Manejo de errores, incluyendo redireccion si no esta autenticado
         setError(err.response?.data?.error || "Error al cargar datos");
         if (err.response?.status === 401) {
           localStorage.removeItem("token");
@@ -44,6 +53,7 @@ const UserPanel = () => {
       }
     };
 
+    // Condiciones para cargar los datos solo si hay usuario
     if (user && !data) {
       fetchData();
     } else if (!user) {
@@ -51,17 +61,20 @@ const UserPanel = () => {
     }
   }, [navigate, user, data]);
 
+  // Estado para el formulario de edicion de datos del usuario
   const [editForm, setEditForm] = useState({
     nombre: user?.nombre || "",
     email: user?.email || "",
     password: "",
   });
 
+  // Maneja cambios en los inputs del formulario de edicion
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Envia los datos editados al servidor
   const handleEditSubmit = async () => {
     try {
       const res = await axios.put(`${API_URL}/api/users/mi-cuenta`, editForm, {
@@ -77,13 +90,15 @@ const UserPanel = () => {
     }
   };
 
+  // Maneja cambios en los inputs del formulario de contraseña
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Envia el cambio de contraseña al servidor
   const handlePasswordSubmit = async () => {
-    // Validate passwords match
+    // Validacion de que las contraseñas coincidan
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       alert("Las contraseñas nuevas no coinciden");
       return;
@@ -103,6 +118,7 @@ const UserPanel = () => {
         }
       );
       alert(res.data.message || "Contraseña actualizada correctamente");
+      // Limpia el formulario y cierra el modal
       setPasswordForm({
         currentPassword: "",
         newPassword: "",
@@ -115,6 +131,7 @@ const UserPanel = () => {
     }
   };
 
+  // Maneja la eliminacion de la cuenta del usuario
   const handleDeleteAccount = async () => {
     if (
       !window.confirm(
@@ -137,6 +154,7 @@ const UserPanel = () => {
     }
   };
 
+  // Maneja la cancelacion de la reserva
   const handleCancelReservation = async (id_reserva) => {
     if (!window.confirm("¿Estás seguro de cancelar esta reserva?")) {
       return;
@@ -168,16 +186,20 @@ const UserPanel = () => {
     }
   };
 
+  // Estados de carga y error
   if (loading) return <div className="user-panel">Cargando...</div>;
   if (error) return <div className="user-panel error-message">{error}</div>;
 
+  // Renderizado principal del componente
   return (
     <div className="user-panel">
+      {/* Seccion de perfil del usuario */} 
       <section className="profile-section">
         <h2>Mi perfil</h2>
         <div className="avatar-placeholder"></div>
 
         <div className="user-info">
+          {/* Informacion basica del usuario */}
           <p>
             <strong>Nombre:</strong> {data?.usuario.nombre}
           </p>
@@ -191,6 +213,7 @@ const UserPanel = () => {
           <p>
             <strong>Puntos:</strong> {data?.usuario.puntos || 0}
           </p>
+          {/* Botones de acciones del perfil */}
           <div className="button-group">
             <button
               className="edit-btn light-text"
@@ -214,6 +237,7 @@ const UserPanel = () => {
         </div>
       </section>
 
+      {/* Formulario de edicion (solo visible cuando isEditing es true) */}
       {isEditing && (
         <div className="user-panel-section">
           <h2>Editar mis datos</h2>
@@ -237,10 +261,12 @@ const UserPanel = () => {
         </div>
       )}
 
+      {/* Seccion de reservas del usuario */}
       <section className="reservations-section">
         <h3>Mis reservas</h3>
         {data?.reservas?.length > 0 ? (
           data.reservas.map((reserva, index) => {
+            // Genera un ID unico para cada reserva
             const reservationId =
               reserva.id_reserva ||
               reserva.id ||
@@ -249,6 +275,7 @@ const UserPanel = () => {
 
             return (
               <div key={reservationId} className="reservation-card">
+                {/* Detalles de la reserva */}
                 <p>
                   <strong>Actividad:</strong> {reserva.nombre_actividad}
                 </p>
@@ -259,14 +286,15 @@ const UserPanel = () => {
                 <p>
                   <strong>Estado:</strong> {reserva.estado}
                 </p>
-
-                {reserva.estado !== "cancelada" && (
-                  <PrimaryButton
-                    onClick={() => handleCancelReservation(reservationId)}
-                    texto="Cancelar reserva"
-                    className="cancel-button"
-                  />
-                )}
+                {/* Muestra el boton de cancelar solo si la reserva no esta cancelada ni finalizada */}
+                {reserva.estado !== "cancelada" &&
+                  reserva.estado !== "finalizado" && (
+                    <PrimaryButton
+                      onClick={() => handleCancelReservation(reservationId)}
+                      texto="Cancelar reserva"
+                      className="cancel-button"
+                    />
+                  )}
               </div>
             );
           })
@@ -275,7 +303,7 @@ const UserPanel = () => {
         )}
       </section>
 
-      {/* Modal para cambiar contraseña */}
+      {/* Modal para cambiar contraseña (solo visible cuando showPasswordModal es true */}
       {showPasswordModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -321,6 +349,7 @@ const UserPanel = () => {
         </div>
       )}
 
+      {/* Seccion de recompensas del usuario */}
       <section className="rewards-section">
         <h3>Recompensas</h3>
         {data?.recompensas?.length > 0 ? (
