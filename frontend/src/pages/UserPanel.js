@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/UserPanel.css";
 import PrimaryButton from "../components/buttons/PrimaryButton";
+import SecundaryButton from "../components/buttons/SecondaryButton"
 
 // URL base de la API obtenida de las variables de entorno
 const API_URL = process.env.REACT_APP_API_URL;
@@ -15,6 +16,7 @@ const UserPanel = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('pendientes');
   const navigate = useNavigate();
 
   // Obtiene los datos del usuario desde el localStorage
@@ -193,7 +195,7 @@ const UserPanel = () => {
   // Renderizado principal del componente
   return (
     <div className="user-panel">
-      {/* Seccion de perfil del usuario */} 
+      {/* Seccion de perfil del usuario */}
       <section className="profile-section">
         <h2>Mi perfil</h2>
         <div className="avatar-placeholder"></div>
@@ -262,46 +264,82 @@ const UserPanel = () => {
       )}
 
       {/* Seccion de reservas del usuario */}
-      <section className="reservations-section">
-        <h3>Mis reservas</h3>
-        {data?.reservas?.length > 0 ? (
-          data.reservas.map((reserva, index) => {
-            // Genera un ID unico para cada reserva
-            const reservationId =
-              reserva.id_reserva ||
-              reserva.id ||
-              reserva.reserva_id ||
-              `temp-${index}`;
+ {/* Seccion de reservas del usuario */}
+<section className="reservations-section">
+  <h3>Mis reservas</h3>
 
-            return (
-              <div key={reservationId} className="reservation-card">
-                {/* Detalles de la reserva */}
-                <p>
-                  <strong>Actividad:</strong> {reserva.nombre_actividad}
-                </p>
-                <p>
-                  <strong>Fecha:</strong>{" "}
-                  {new Date(reserva.fecha_reserva).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Estado:</strong> {reserva.estado}
-                </p>
-                {/* Muestra el boton de cancelar solo si la reserva no esta cancelada ni finalizada */}
-                {reserva.estado !== "cancelada" &&
-                  reserva.estado !== "finalizado" && (
-                    <PrimaryButton
-                      onClick={() => handleCancelReservation(reservationId)}
-                      texto="Cancelar reserva"
-                      className="cancel-button"
-                    />
-                  )}
-              </div>
-            );
-          })
-        ) : (
-          <p>No tienes reservas aún.</p>
-        )}
-      </section>
+  {/* Pestañas para diferentes estados */}
+  <div className="reservation-tabs">
+    <button
+      className={`tab-button ${activeTab === "pendientes" ? "active" : ""}`}
+      onClick={() => setActiveTab("pendientes")}
+    >
+      Pendientes
+    </button>
+    <button
+      className={`tab-button ${activeTab === "canceladas" ? "active" : ""}`}
+      onClick={() => setActiveTab("canceladas")}
+    >
+      Canceladas
+    </button>
+    <button
+      className={`tab-button ${activeTab === "finalizadas" ? "active" : ""}`}
+      onClick={() => setActiveTab("finalizadas")}
+    >
+      Finalizadas
+    </button>
+  </div>
+
+  {/* Listado de reservas según la pestaña activa */}
+  {data?.reservas?.length > 0 ? (
+    <div className="reservations-container">
+      {activeTab === "pendientes" && (
+        <>
+          {data.reservas
+            .filter((reserva) => reserva.estado === "pendiente")
+            .map((reserva, index) => (
+              <ReservationCard
+                key={reserva.id_reserva || `pendiente-${index}`}
+                reserva={reserva}
+                onCancel={handleCancelReservation}
+                showCancelButton={true}
+              />
+            ))}
+        </>
+      )}
+
+      {activeTab === "canceladas" && (
+        <>
+          {data.reservas
+            .filter((reserva) => reserva.estado === "cancelada")
+            .map((reserva, index) => (
+              <ReservationCard
+                key={reserva.id_reserva || `cancelada-${index}`}
+                reserva={reserva}
+                showCancelButton={false}
+              />
+            ))}
+        </>
+      )}
+
+      {activeTab === "finalizadas" && (
+        <>
+          {data.reservas
+            .filter((reserva) => reserva.estado === "finalizado")
+            .map((reserva, index) => (
+              <ReservationCard
+                key={reserva.id_reserva || `finalizada-${index}`}
+                reserva={reserva}
+                showCancelButton={false}
+              />
+            ))}
+        </>
+      )}
+    </div>
+  ) : (
+    <p>No tienes reservas aún.</p>
+  )}
+</section>
 
       {/* Modal para cambiar contraseña (solo visible cuando showPasswordModal es true */}
       {showPasswordModal && (
@@ -371,5 +409,21 @@ const UserPanel = () => {
     </div>
   );
 };
+
+const ReservationCard = ({ reserva, onCancel, showCancelButton }) => (
+  <div className="reservation-card">
+    <p><strong>Actividad:</strong> {reserva.nombre_actividad}</p>
+    <p><strong>Fecha:</strong> {new Date(reserva.fecha_reserva).toLocaleDateString()}</p>
+    <p><strong>Estado:</strong> {reserva.estado}</p>
+    {showCancelButton && (
+      <SecundaryButton
+        onClick={() => onCancel(reserva.id_reserva)}
+        texto="Cancelar reserva"
+        lightText={true}
+        className="cancel-button"
+      />
+    )}
+  </div>
+);
 
 export default UserPanel;
