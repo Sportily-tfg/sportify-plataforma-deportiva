@@ -75,6 +75,9 @@ procesarReservasFinalizadas();
 
 setInterval(procesarReservasFinalizadas, 1000 * 60 * 60 * 6); // Cada 6 horas
 
+// 6.1. Cron que actualiza reservas vencidas
+require('./cron');
+
 // 7. Iniciar servidor (usando el puerto de Railway)
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

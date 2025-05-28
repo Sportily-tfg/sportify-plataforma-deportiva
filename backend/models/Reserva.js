@@ -54,6 +54,20 @@ static async cancel(id_reserva) {
     );
     return rows[0] || null; // Asegura que devuelva null si no encuentra la reserva
 }
+
+static async finalizarReservasVencidas() {
+  const { rows } = await pool.query(`
+    UPDATE reservas r
+    SET estado = 'finalizado'
+    FROM actividades a
+    WHERE r.id_actividad = a.id_actividad
+      AND r.estado = 'pendiente'
+      AND (a.fecha + a.horario) <= NOW()
+    RETURNING r.*;
+  `);
+  return rows;
+}
+
 }
 
 module.exports = Reserva;
