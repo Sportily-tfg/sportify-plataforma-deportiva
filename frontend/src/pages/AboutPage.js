@@ -10,9 +10,9 @@ import Gym3 from "../assets/gym3.png";
 import adidas from "../assets/adidas.png";
 import Nike from "../assets/Nike.png";
 import head from "../assets/head.png";
-import PadelBlog from "../assets/PadelBlog.jpg";
-import YogaBlog from "../assets/YogaBlog.jpg";
-import EquipoBlog from "../assets/EquipoBlog.jpg";
+import PadelBlog from "../assets/blog/PadelBlog.jpg";
+import YogaBlog from "../assets/blog/YogaBlog.jpg";
+import EquipoBlog from "../assets/blog/EquipoBlog.jpg";
 
 const AboutPage = () => {
   const navigate = useNavigate();
@@ -144,8 +144,7 @@ const AboutPage = () => {
             <PartnerLogo src={Gym2} alt="Gimnasio 2" />
             <PartnerLogo src={Gym3} alt="Gimnasio 3" />
             <PartnerLogo src={head} alt="Logo Head" />
-            <PartnerLogo src={adidas} alt="Logo Adidas" />
-            <PartnerLogo src={Nike} alt="Logo Nike" />
+            <PartnerLogo src={adidas} alt="Logo Adidas" /><PartnerLogo src={Nike} alt="Logo Nike" />
           </PartnersGrid>
         </PartnersSection>
 

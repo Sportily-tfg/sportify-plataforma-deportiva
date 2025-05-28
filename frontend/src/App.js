@@ -13,6 +13,8 @@ import Navbar from "./components/navbar/Navbar";
 import UserPanel from "./pages/UserPanel";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import Footer from "./components/Footer";
+import BlogPage from './pages/BlogPage';
+import BlogDetailPage from './pages/BlogDetailPage';
 
 function App() {
   const { loading } = useAuth(); // Ahora useAuth está definido
@@ -29,6 +31,8 @@ function App() {
           <Routes>
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contacto" element={<ContactPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogDetailPage />} />
             {/* Páginas accesibles solo si no hay sesión iniciada */}
             <Route
               path="/"
