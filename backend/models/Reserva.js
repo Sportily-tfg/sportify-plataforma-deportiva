@@ -13,21 +13,21 @@ class Reserva {
     }
 
 static async getByUser(id_usuario) {
-    const { rows } = await pool.query(
-      `SELECT 
-          r.id_reserva,
-          r.fecha_reserva,
-          r.estado as estado_reserva,
-          r.id_actividad,
-          a.nombre_actividad,
-          a.estado as estado_actividad
-       FROM reservas r
-       JOIN actividades a ON r.id_actividad = a.id_actividad
-       WHERE r.id_usuario = $1`,
-      [id_usuario]
-    );
-    return rows;
-}   
+  const { rows } = await pool.query(
+    `SELECT 
+        r.id_reserva,
+        r.fecha_reserva,
+        r.estado as estado_reserva,
+        r.id_actividad,
+        a.nombre_actividad
+     FROM reservas r
+     JOIN actividades a ON r.id_actividad = a.id_actividad
+     WHERE r.id_usuario = $1`,
+    [id_usuario]
+  );
+  return rows;
+}
+
 
     static async getByActividad(id_actividad) {
         const { rows } = await pool.query(
