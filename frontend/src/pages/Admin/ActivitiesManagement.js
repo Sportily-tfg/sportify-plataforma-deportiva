@@ -173,7 +173,7 @@ const ActivitiesManagement = () => {
   const handleDelete = async (id) => {
     openModal(
       'Eliminar actividad',
-      '¿Estás seguro de eliminar esta actividad?',
+      '¿Estás seguro de eliminar esta actividad? Esto eliminara todas las reservas relacionadas con la actividad',
       'warning',
       async () => {
         try {
