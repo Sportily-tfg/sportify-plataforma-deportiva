@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import "../../styles/ModalPersonalizado.css";
 
@@ -13,9 +13,19 @@ const ModalPersonalizado = ({
   cancelText,
   children,
 }) => {
+  // Efecto para cerrar automáticamente modales de tipo success después de 2 segundos
+  useEffect(() => {
+    if (isOpen && type === "success") {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 2000); // 2000ms = 2 segundos
+
+      return () => clearTimeout(timer); // limpiar timer si se desmonta o cambia isOpen
+    }
+  }, [isOpen, type, onClose]);
+
   if (!isOpen) return null;
 
-  // Determinar la clase CSS según el tipo de modal
   const modalTypeClass = type ? `modal-${type}` : "";
 
   return (
@@ -49,9 +59,11 @@ const ModalPersonalizado = ({
               </button>
             </>
           ) : (
-            <button onClick={onClose} className="modal-cancel-btn">
-              {cancelText || "Cerrar"}
-            </button>
+            type !== "success" && (
+              <button onClick={onClose} className="modal-cancel-btn">
+                {cancelText || "Cerrar"}
+              </button>
+            )
           )}
         </div>
       </div>
