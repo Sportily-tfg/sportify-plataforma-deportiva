@@ -23,6 +23,16 @@ const CalendarActivities = () => {
     tipo: "info",
   });
 
+  // Función para verificar si una actividad ya ha pasado
+  const actividadHaPasado = (fecha, hora) => {
+    const ahora = new Date();
+    const [horas, minutos] = hora.split(":").map(Number);
+    const fechaActividad = new Date(fecha);
+    fechaActividad.setHours(horas, minutos, 0, 0);
+
+    return fechaActividad < ahora;
+  };
+
   // Obtener actividades y reservas
   useEffect(() => {
     const fetchData = async () => {
@@ -169,7 +179,9 @@ const CalendarActivities = () => {
                 <p>
                   <strong>Precio:</strong> {activity.precio}€
                 </p>
-                {!isReserved(activity.id_actividad) ? (
+                {actividadHaPasado(activity.fecha, activity.horario) ? (
+                  <p className="activity-finished">Actividad Finalizada</p>
+                ) : !isReserved(activity.id_actividad) ? (
                   <PrimaryButton
                     texto="Reservar"
                     lightText={true}

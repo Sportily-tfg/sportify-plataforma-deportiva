@@ -63,11 +63,12 @@ static async finalizarReservasVencidas() {
     FROM actividades a
     WHERE r.id_actividad = a.id_actividad
       AND r.estado = 'pendiente'
-      AND (a.fecha + a.horario) <= NOW()
+      AND (a.fecha::text || ' ' || a.horario::text)::timestamp <= NOW()
     RETURNING r.*;
   `);
   return rows;
 }
+
 
 }
 

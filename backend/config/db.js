@@ -9,14 +9,17 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: true, // Neon requiere SSL
   },
-  max: 20, // Número máximo de conexiones en el pool
+  max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
 });
 
-// Verificación de conexión (opcional pero útil)
-pool.on('connect', () => {
+// Establece la zona horaria a 'Europe/Madrid' en cada nueva conexión
+pool.on('connect', (client) => {
   console.log('✅ Conectado a la base de datos Neon PostgreSQL');
+  client.query("SET TIME ZONE 'Europe/Madrid';")
+    .then(() => console.log("🕒 Zona horaria configurada: Europe/Madrid"))
+    .catch(err => console.error("❌ Error al establecer zona horaria:", err));
 });
 
 pool.on('error', (err) => {
