@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/UserPanel.css";
-import PrimaryButton from "../components/buttons/PrimaryButton";
 import SecundaryButton from "../components/buttons/SecondaryButton";
 import ModalPersonalizado from "../components/modal/ModalPersonalizado";
 
@@ -50,14 +49,17 @@ const UserPanel = () => {
   };
 
   const closeModal = () => {
-    setModal((prev) => ({ ...prev, isOpen: false }));
+    setModal((prev) => {
+      if (prev.type === "success") {
+        window.location.reload(); // Recarga la página
+      }
+      return { ...prev, isOpen: false };
+    });
   };
-
   // Obtiene los datos del usuario desde el localStorage
   const user = JSON.parse(localStorage.getItem("user"));
 
   // Estados para manejar la edcion de datos y el modal de contraseña
-  const [isEditing, setIsEditing] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
@@ -118,11 +120,15 @@ const UserPanel = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
+      // Mostrar modal de éxito
       openModal(
         "Datos actualizados",
         res.data.message || "Tus datos se han actualizado correctamente",
         "success",
-        () => window.location.reload()
+        null,
+        "", // confirmText vacío => no aparece botón de confirmar
+        "Cerrar"
       );
     } catch (err) {
       console.error(err);
@@ -157,19 +163,26 @@ const UserPanel = () => {
           },
         }
       );
+
+      // Cerrar el modal de cambio de contraseña
+      setShowPasswordModal(false);
+
+      // Abrir el modal de éxito
       openModal(
         "Contraseña actualizada",
         res.data.message || "Contraseña actualizada correctamente",
         "success",
-        () => {
-          setPasswordForm({
-            currentPassword: "",
-            newPassword: "",
-            confirmPassword: "",
-          });
-          setShowPasswordModal(false);
-        }
+        null,
+        "",
+        "Cerrar"
       );
+
+      // Limpiar el formulario de contraseñas
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     } catch (err) {
       console.error(err);
       openModal(
@@ -179,6 +192,8 @@ const UserPanel = () => {
       );
     }
   };
+
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Maneja la eliminacion de la cuenta del usuario
   const handleDeleteAccount = async () => {
@@ -255,6 +270,29 @@ const UserPanel = () => {
     );
   };
 
+  const ReservationCard = ({ reserva, onCancel, showCancelButton }) => (
+    <div className="reservation-card">
+      <p>
+        <strong>Actividad:</strong> {reserva.nombre_actividad}
+      </p>
+      <p>
+        <strong>Fecha:</strong>{" "}
+        {new Date(reserva.fecha_reserva).toLocaleDateString()}
+      </p>
+      <p>
+        <strong>Estado:</strong> {reserva.estado}
+      </p>
+      {showCancelButton && (
+        <SecundaryButton
+          onClick={() => onCancel(reserva.id_reserva)}
+          texto="Cancelar reserva"
+          lightText={true}
+          className="cancel-button"
+        />
+      )}
+    </div>
+  );
+
   // Estados de carga y error
   if (loading) return <div className="user-panel">Cargando...</div>;
   if (error) return <div className="user-panel error-message">{error}</div>;
@@ -286,9 +324,16 @@ const UserPanel = () => {
           <div className="button-group">
             <button
               className="edit-btn light-text"
-              onClick={() => setIsEditing(!isEditing)}
+              onClick={() => {
+                setEditForm({
+                  nombre: data?.usuario?.nombre || "",
+                  email: data?.usuario?.email || "",
+                  password: "",
+                });
+                setShowEditModal(true);
+              }}
             >
-              {isEditing ? "Cancelar" : "Editar datos"}
+              Editar datos
             </button>
             <button
               className="edit-btn light-text"
@@ -307,27 +352,36 @@ const UserPanel = () => {
       </section>
 
       {/* Formulario de edicion (solo visible cuando isEditing es true) */}
-      {isEditing && (
-        <div className="user-panel-section">
-          <h2>Editar mis datos</h2>
-          <input
-            type="text"
-            placeholder="Nuevo nombre"
-            name="nombre"
-            value={editForm.nombre}
-            onChange={handleInputChange}
-          />
-          <input
-            type="email"
-            placeholder="Nuevo email"
-            name="email"
-            value={editForm.email}
-            onChange={handleInputChange}
-          />
-          <PrimaryButton onClick={handleEditSubmit}>
-            Guardar cambios
-          </PrimaryButton>
-        </div>
+      {showEditModal && (
+        <ModalPersonalizado
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          title="Editar mis datos"
+          type="info"
+          onConfirm={async () => {
+            await handleEditSubmit();
+            setShowEditModal(false);
+          }}
+          confirmText="Guardar cambios"
+          cancelText="Cancelar"
+        >
+          <div className="modal-body">
+            <input
+              type="text"
+              placeholder="Nuevo nombre"
+              name="nombre"
+              value={editForm.nombre}
+              onChange={handleInputChange}
+            />
+            <input
+              type="email"
+              placeholder="Nuevo email"
+              name="email"
+              value={editForm.email}
+              onChange={handleInputChange}
+            />
+          </div>
+        </ModalPersonalizado>
       )}
 
       {/* Seccion de reservas del usuario */}
@@ -482,28 +536,5 @@ const UserPanel = () => {
     </div>
   );
 };
-
-const ReservationCard = ({ reserva, onCancel, showCancelButton }) => (
-  <div className="reservation-card">
-    <p>
-      <strong>Actividad:</strong> {reserva.nombre_actividad}
-    </p>
-    <p>
-      <strong>Fecha:</strong>{" "}
-      {new Date(reserva.fecha_reserva).toLocaleDateString()}
-    </p>
-    <p>
-      <strong>Estado:</strong> {reserva.estado}
-    </p>
-    {showCancelButton && (
-      <SecundaryButton
-        onClick={() => onCancel(reserva.id_reserva)}
-        texto="Cancelar reserva"
-        lightText={true}
-        className="cancel-button"
-      />
-    )}
-  </div>
-);
 
 export default UserPanel;

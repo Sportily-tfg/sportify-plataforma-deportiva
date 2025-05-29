@@ -22,7 +22,7 @@
   border: 1px solid #333;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   animation: modalFadeIn 0.3s ease;
-  border-top: 4px solid #ff8000; /* Color por defecto (naranja) */
+  border-top: 4px solid #ff8000; 
 }
 
 @keyframes modalFadeIn {
@@ -72,7 +72,7 @@
   font-weight: bold;
   font-size: 1.2rem;
   flex-shrink: 0;
-  background: #ff8000; /* Color por defecto */
+  background: #47c7fc
 }
 
 /* Cuerpo del modal */
@@ -142,11 +142,11 @@
 }
 
 .modal-info .modal-content {
-  border-top-color: #3f51b5;
+  border-top-color: #47c7fc;
 }
 
 .modal-info .modal-icon {
-  background: #3f51b5;
+  background: #47c7fc;
 }
 
 /* Estilos para los botones de cada tipo */
@@ -174,16 +174,16 @@
 }
 
 .modal-warning .modal-confirm-btn:hover {
-  background: #e67e22;
+  background: #e62222;
 }
 
 .modal-info .modal-confirm-btn {
-  background: #3f51b5;
+  background: #47c7fc;
   color: white;
 }
 
 .modal-info .modal-confirm-btn:hover {
-  background: #303f9f;
+  background: #3aa1cc;
 }
 
 /* Responsive */
