@@ -69,12 +69,6 @@ if (app._router && app._router.stack) {
   });
 }
 
-// 6. Ejecutar sistema de puntos al iniciar
-const procesarReservasFinalizadas = require('./utils/procesarPuntos');
-procesarReservasFinalizadas();
-
-setInterval(procesarReservasFinalizadas, 1000 * 60 * 60 * 6); // Cada 6 horas
-
 // 6.1. Cron que actualiza reservas vencidas
 require('./cron');
 

@@ -116,8 +116,17 @@ router.get('/:id', authMiddleware, async (req, res) => {
       return res.status(403).json({ error: 'No autorizado' });
     }
 
-    const usuario = await Usuario.findById(req.params.id);
-    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+    // Obtener usuario CON puntos
+    const { rows: usuarioRows } = await pool.query(
+      `SELECT id_usuario, nombre, email, rol, fecha_registro, puntos 
+       FROM usuarios 
+       WHERE id_usuario = $1`,
+      [req.params.id]
+    );
+
+    if (usuarioRows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
 
     const reservas = await pool.query(
       `SELECT r.id_reserva, a.nombre_actividad, r.fecha_reserva, r.estado
@@ -136,7 +145,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
     );
 
     res.json({
-      usuario,
+      usuario: usuarioRows[0], 
       reservas: reservas.rows,
       recompensas: recompensas.rows
     });
