@@ -24,6 +24,16 @@ const ActividadesPanel = () => {
     tipo: "info",
   });
 
+  // Función para verificar si una actividad ya ha pasado
+  const actividadHaPasado = (fecha, hora) => {
+    const ahora = new Date();
+    const [horas, minutos] = hora.split(":").map(Number);
+    const fechaActividad = new Date(fecha);
+    fechaActividad.setHours(horas, minutos, 0, 0);
+
+    return fechaActividad < ahora;
+  };
+
   useEffect(() => {
     if (modalReserva.abierto && modalReserva.tipo === "success") {
       const timer = setTimeout(() => {
@@ -40,11 +50,17 @@ const ActividadesPanel = () => {
         const response = await fetch(`${API_URL}/api/activities`);
         if (!response.ok) throw new Error("Error al cargar actividades");
         const data = await response.json();
-        setActividades(data);
-        setActividadesFiltradas(data);
+
+        // Filtrar actividades que no han pasado
+        const actividadesFiltradasPorFecha = data.filter(
+          (actividad) => !actividadHaPasado(actividad.fecha, actividad.horario)
+        );
+
+        setActividades(actividadesFiltradasPorFecha);
+        setActividadesFiltradas(actividadesFiltradasPorFecha);
         const categoriasUnicas = [
           "Todas",
-          ...new Set(data.map((a) => a.categoria)),
+          ...new Set(actividadesFiltradasPorFecha.map((a) => a.categoria)),
         ];
         setCategorias(categoriasUnicas);
       } catch (err) {
@@ -68,6 +84,7 @@ const ActividadesPanel = () => {
     }
   }, [categoriaSeleccionada, actividades]);
 
+  // Resto del código (handleReservar, return, etc.) permanece igual...
   const handleReservar = async (id_actividad) => {
     if (!user) {
       setModalReserva({
