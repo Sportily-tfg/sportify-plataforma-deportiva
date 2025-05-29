@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/UserPanel.css";
 import PrimaryButton from "../components/buttons/PrimaryButton";
-import SecundaryButton from "../components/buttons/SecondaryButton"
+import SecundaryButton from "../components/buttons/SecondaryButton";
+import ModalPersonalizado from "../components/modal/ModalPersonalizado";
 
 // URL base de la API obtenida de las variables de entorno
 const API_URL = process.env.REACT_APP_API_URL;
@@ -16,8 +17,41 @@ const UserPanel = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('pendientes');
+  const [activeTab, setActiveTab] = useState("pendientes");
   const navigate = useNavigate();
+
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info", // 'success', 'error', 'warning', 'info'
+    onConfirm: null,
+    confirmText: "",
+    cancelText: "",
+  });
+
+  const openModal = (
+    title,
+    message,
+    type = "info",
+    onConfirm = null,
+    confirmText = "Confirmar",
+    cancelText = "Cerrar"
+  ) => {
+    setModal({
+      isOpen: true,
+      title,
+      message,
+      type,
+      onConfirm,
+      confirmText,
+      cancelText,
+    });
+  };
+
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+  };
 
   // Obtiene los datos del usuario desde el localStorage
   const user = JSON.parse(localStorage.getItem("user"));
@@ -84,11 +118,15 @@ const UserPanel = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      alert(res.data.message || "Datos actualizados");
-      window.location.reload();
+      openModal(
+        "Datos actualizados",
+        res.data.message || "Tus datos se han actualizado correctamente",
+        "success",
+        () => window.location.reload()
+      );
     } catch (err) {
       console.error(err);
-      alert("Error al actualizar datos");
+      openModal("Error", "Error al actualizar datos", "error");
     }
   };
 
@@ -99,10 +137,10 @@ const UserPanel = () => {
   };
 
   // Envia el cambio de contraseña al servidor
+  // En handlePasswordSubmit
   const handlePasswordSubmit = async () => {
-    // Validacion de que las contraseñas coincidan
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      alert("Las contraseñas nuevas no coinciden");
+      openModal("Error", "Las contraseñas nuevas no coinciden", "error");
       return;
     }
 
@@ -119,73 +157,102 @@ const UserPanel = () => {
           },
         }
       );
-      alert(res.data.message || "Contraseña actualizada correctamente");
-      // Limpia el formulario y cierra el modal
-      setPasswordForm({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-      setShowPasswordModal(false);
+      openModal(
+        "Contraseña actualizada",
+        res.data.message || "Contraseña actualizada correctamente",
+        "success",
+        () => {
+          setPasswordForm({
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: "",
+          });
+          setShowPasswordModal(false);
+        }
+      );
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || "Error al actualizar la contraseña");
+      openModal(
+        "Error",
+        err.response?.data?.error || "Error al actualizar la contraseña",
+        "error"
+      );
     }
   };
 
   // Maneja la eliminacion de la cuenta del usuario
   const handleDeleteAccount = async () => {
-    if (
-      !window.confirm(
-        "¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer."
-      )
-    )
-      return;
-    try {
-      await axios.delete(`${API_URL}/api/users/mi-cuenta`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      localStorage.clear();
-      alert("Cuenta eliminada");
-      navigate("/");
-    } catch (err) {
-      console.error(err);
-      alert("Error al eliminar cuenta");
-    }
+    openModal(
+      "Eliminar cuenta",
+      "¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer.",
+      "warning",
+      async () => {
+        try {
+          await axios.delete(`${API_URL}/api/users/mi-cuenta`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          localStorage.clear();
+          openModal(
+            "Cuenta eliminada",
+            "Tu cuenta ha sido eliminada correctamente.",
+            "success"
+          );
+          navigate("/");
+        } catch (err) {
+          console.error(err);
+          openModal("Error", "Error al eliminar cuenta", "error");
+        }
+      },
+      "Eliminar",
+      "Cancelar"
+    );
   };
 
   // Maneja la cancelacion de la reserva
   const handleCancelReservation = async (id_reserva) => {
-    if (!window.confirm("¿Estás seguro de cancelar esta reserva?")) {
-      return;
-    }
+    openModal(
+      "Cancelar reserva",
+      "¿Estás seguro de cancelar esta reserva?",
+      "warning",
+      async () => {
+        try {
+          const response = await axios.put(
+            `${API_URL}/api/reservations/cancelar/${id_reserva}`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
 
-    try {
-      const response = await axios.put(
-        `${API_URL}/api/reservations/cancelar/${id_reserva}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          if (response.data && response.data.reserva) {
+            setData((prev) => ({
+              ...prev,
+              reservas: prev.reservas.map((r) =>
+                r.id_reserva === id_reserva ? { ...r, estado: "cancelada" } : r
+              ),
+            }));
+            openModal(
+              "Reserva cancelada",
+              "La reserva se ha cancelado exitosamente.",
+              "success"
+            );
+          }
+        } catch (error) {
+          console.error("Error detallado:", error);
+          openModal(
+            "Error",
+            error.response?.data?.error || "Error al cancelar reserva",
+            "error"
+          );
         }
-      );
-
-      if (response.data && response.data.reserva) {
-        setData((prev) => ({
-          ...prev,
-          reservas: prev.reservas.map((r) =>
-            r.id_reserva === id_reserva ? { ...r, estado: "cancelada" } : r
-          ),
-        }));
-        alert("Reserva cancelada exitosamente");
-      }
-    } catch (error) {
-      console.error("Error detallado:", error);
-      alert(error.response?.data?.error || "Error al cancelar reserva");
-    }
+      },
+      "Cancelar reserva",
+      "Volver"
+    );
   };
 
   // Estados de carga y error
@@ -264,127 +331,123 @@ const UserPanel = () => {
       )}
 
       {/* Seccion de reservas del usuario */}
- {/* Seccion de reservas del usuario */}
-<section className="reservations-section">
-  <h3>Mis reservas</h3>
+      <section className="reservations-section">
+        <h3>Mis reservas</h3>
 
-  {/* Pestañas para diferentes estados */}
-  <div className="reservation-tabs">
-    <button
-      className={`tab-button ${activeTab === "pendientes" ? "active" : ""}`}
-      onClick={() => setActiveTab("pendientes")}
-    >
-      Pendientes
-    </button>
-    <button
-      className={`tab-button ${activeTab === "canceladas" ? "active" : ""}`}
-      onClick={() => setActiveTab("canceladas")}
-    >
-      Canceladas
-    </button>
-    <button
-      className={`tab-button ${activeTab === "finalizadas" ? "active" : ""}`}
-      onClick={() => setActiveTab("finalizadas")}
-    >
-      Finalizadas
-    </button>
-  </div>
+        {/* Pestañas para diferentes estados */}
+        <div className="reservation-tabs">
+          <button
+            className={`tab-button ${
+              activeTab === "pendientes" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("pendientes")}
+          >
+            Pendientes
+          </button>
+          <button
+            className={`tab-button ${
+              activeTab === "canceladas" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("canceladas")}
+          >
+            Canceladas
+          </button>
+          <button
+            className={`tab-button ${
+              activeTab === "finalizadas" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("finalizadas")}
+          >
+            Finalizadas
+          </button>
+        </div>
 
-  {/* Listado de reservas según la pestaña activa */}
-  {data?.reservas?.length > 0 ? (
-    <div className="reservations-container">
-      {activeTab === "pendientes" && (
-        <>
-          {data.reservas
-            .filter((reserva) => reserva.estado === "pendiente")
-            .map((reserva, index) => (
-              <ReservationCard
-                key={reserva.id_reserva || `pendiente-${index}`}
-                reserva={reserva}
-                onCancel={handleCancelReservation}
-                showCancelButton={true}
-              />
-            ))}
-        </>
-      )}
+        {/* Listado de reservas según la pestaña activa */}
+        {data?.reservas?.length > 0 ? (
+          <div className="reservations-container">
+            {activeTab === "pendientes" && (
+              <>
+                {data.reservas
+                  .filter((reserva) => reserva.estado === "pendiente")
+                  .map((reserva, index) => (
+                    <ReservationCard
+                      key={reserva.id_reserva || `pendiente-${index}`}
+                      reserva={reserva}
+                      onCancel={handleCancelReservation}
+                      showCancelButton={true}
+                    />
+                  ))}
+              </>
+            )}
 
-      {activeTab === "canceladas" && (
-        <>
-          {data.reservas
-            .filter((reserva) => reserva.estado === "cancelada")
-            .map((reserva, index) => (
-              <ReservationCard
-                key={reserva.id_reserva || `cancelada-${index}`}
-                reserva={reserva}
-                showCancelButton={false}
-              />
-            ))}
-        </>
-      )}
+            {activeTab === "canceladas" && (
+              <>
+                {data.reservas
+                  .filter((reserva) => reserva.estado === "cancelada")
+                  .map((reserva, index) => (
+                    <ReservationCard
+                      key={reserva.id_reserva || `cancelada-${index}`}
+                      reserva={reserva}
+                      showCancelButton={false}
+                    />
+                  ))}
+              </>
+            )}
 
-      {activeTab === "finalizadas" && (
-        <>
-          {data.reservas
-            .filter((reserva) => reserva.estado === "finalizado")
-            .map((reserva, index) => (
-              <ReservationCard
-                key={reserva.id_reserva || `finalizada-${index}`}
-                reserva={reserva}
-                showCancelButton={false}
-              />
-            ))}
-        </>
-      )}
-    </div>
-  ) : (
-    <p>No tienes reservas aún.</p>
-  )}
-</section>
+            {activeTab === "finalizadas" && (
+              <>
+                {data.reservas
+                  .filter((reserva) => reserva.estado === "finalizado")
+                  .map((reserva, index) => (
+                    <ReservationCard
+                      key={reserva.id_reserva || `finalizada-${index}`}
+                      reserva={reserva}
+                      showCancelButton={false}
+                    />
+                  ))}
+              </>
+            )}
+          </div>
+        ) : (
+          <p>No tienes reservas aún.</p>
+        )}
+      </section>
 
       {/* Modal para cambiar contraseña (solo visible cuando showPasswordModal es true */}
       {showPasswordModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Cambiar contraseña</h2>
-            <div className="modal-body">
-              <input
-                type="password"
-                placeholder="Contraseña actual"
-                name="currentPassword"
-                value={passwordForm.currentPassword}
-                onChange={handlePasswordChange}
-              />
-              <input
-                type="password"
-                placeholder="Nueva contraseña"
-                name="newPassword"
-                value={passwordForm.newPassword}
-                onChange={handlePasswordChange}
-              />
-              <input
-                type="password"
-                placeholder="Confirmar nueva contraseña"
-                name="confirmPassword"
-                value={passwordForm.confirmPassword}
-                onChange={handlePasswordChange}
-              />
-              <div className="modal-buttons">
-                <button
-                  className="edit-btn light-text"
-                  onClick={handlePasswordSubmit}
-                >
-                  Guardar contraseña
-                </button>
-                <button
-                  className="cancel-modal-btn light-text"
-                  onClick={() => setShowPasswordModal(false)}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </div>
+        <ModalPersonalizado
+          isOpen={showPasswordModal}
+          onClose={() => setShowPasswordModal(false)}
+          title="Cambiar contraseña"
+          type="info"
+          onConfirm={handlePasswordSubmit}
+          confirmText="Guardar contraseña"
+          cancelText="Cancelar"
+        >
+          <div className="modal-body">
+            <input
+              type="password"
+              placeholder="Contraseña actual"
+              name="currentPassword"
+              value={passwordForm.currentPassword}
+              onChange={handlePasswordChange}
+            />
+            <input
+              type="password"
+              placeholder="Nueva contraseña"
+              name="newPassword"
+              value={passwordForm.newPassword}
+              onChange={handlePasswordChange}
+            />
+            <input
+              type="password"
+              placeholder="Confirmar nueva contraseña"
+              name="confirmPassword"
+              value={passwordForm.confirmPassword}
+              onChange={handlePasswordChange}
+            />
           </div>
-        </div>
+        </ModalPersonalizado>
       )}
 
       {/* Seccion de recompensas del usuario */}
@@ -406,15 +469,32 @@ const UserPanel = () => {
           <p>No has canjeado recompensas</p>
         )}
       </section>
+      <ModalPersonalizado
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        onConfirm={modal.onConfirm}
+        confirmText={modal.confirmText}
+        cancelText={modal.cancelText}
+      />
     </div>
   );
 };
 
 const ReservationCard = ({ reserva, onCancel, showCancelButton }) => (
   <div className="reservation-card">
-    <p><strong>Actividad:</strong> {reserva.nombre_actividad}</p>
-    <p><strong>Fecha:</strong> {new Date(reserva.fecha_reserva).toLocaleDateString()}</p>
-    <p><strong>Estado:</strong> {reserva.estado}</p>
+    <p>
+      <strong>Actividad:</strong> {reserva.nombre_actividad}
+    </p>
+    <p>
+      <strong>Fecha:</strong>{" "}
+      {new Date(reserva.fecha_reserva).toLocaleDateString()}
+    </p>
+    <p>
+      <strong>Estado:</strong> {reserva.estado}
+    </p>
     {showCancelButton && (
       <SecundaryButton
         onClick={() => onCancel(reserva.id_reserva)}
