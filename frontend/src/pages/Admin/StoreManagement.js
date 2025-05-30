@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import SecondaryButton from '../../components/buttons/SecondaryButton';
 import ModalPersonalizado from '../../components/modal/ModalPersonalizado';
@@ -32,7 +32,8 @@ const StoreManagement = () => {
 
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
 
-  const openModal = (
+  // Memorizar openModal para usar en fetchRecompensas sin warning
+  const openModal = useCallback((
     title,
     message,
     type = "info",
@@ -49,14 +50,14 @@ const StoreManagement = () => {
       confirmText,
       cancelText,
     });
-  };
+  }, []);
 
   const closeModal = () => {
     setModal((prev) => ({ ...prev, isOpen: false }));
   };
 
-  // Cargar recompensas
-  const fetchRecompensas = async () => {
+  // Memorizar fetchRecompensas para que sea estable y evitar warnings
+  const fetchRecompensas = useCallback(async () => {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('token');
@@ -77,11 +78,11 @@ const StoreManagement = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [openModal]);
 
   useEffect(() => {
     fetchRecompensas();
-  }, []);
+  }, [fetchRecompensas]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
