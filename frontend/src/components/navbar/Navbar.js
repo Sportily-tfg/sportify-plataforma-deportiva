@@ -76,6 +76,9 @@ const Navbar = () => {
             <NavLink to="/calendar">Calendario</NavLink>
           </NavItem>
           <NavItem>
+            <NavLink to="/blog">Blog</NavLink>
+          </NavItem>
+          <NavItem>
             <NavLink to="/tienda">Tienda</NavLink>
           </NavItem>
           <NavItem>
