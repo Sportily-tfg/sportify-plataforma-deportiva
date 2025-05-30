@@ -16,6 +16,22 @@ const Tienda = () => {
   const [modalType, setModalType] = useState('info');
   const [modalOnConfirm, setModalOnConfirm] = useState(null);
 
+  // Estados para canje con envío
+  const [esEnvio, setEsEnvio] = useState(false);
+  const [direccionEnvio, setDireccionEnvio] = useState({
+    calle: '',
+    puerta: '',
+    codigoPostal: '',
+    ciudad: '',
+    provincia: '',
+    pais: ''
+  });
+  const [confirmarEnvio, setConfirmarEnvio] = useState(false);
+
+  // Guarda datos del canje actual para usar en confirmación
+  const [idRecompensaActual, setIdRecompensaActual] = useState(null);
+  const [puntosRequeridosActual, setPuntosRequeridosActual] = useState(0);
+
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -49,10 +65,20 @@ const Tienda = () => {
   const handleCloseModal = () => {
     setModalOpen(false);
     setModalOnConfirm(null);
+    setConfirmarEnvio(false);
+    setEsEnvio(false);
+    setDireccionEnvio({
+      calle: '',
+      puerta: '',
+      codigoPostal: '',
+      ciudad: '',
+      provincia: '',
+      pais: ''
+    });
   };
 
-  const handleCanjear = (id_recompensa, puntos_requeridos) => {
-    if (puntosUsuario < puntos_requeridos) {
+  const handleCanjear = (recompensa) => {
+    if (puntosUsuario < recompensa.puntos_requeridos) {
       setModalTitle('Puntos insuficientes');
       setModalMessage('No tienes suficientes puntos para canjear esta recompensa.');
       setModalType('error');
@@ -60,9 +86,67 @@ const Tienda = () => {
       return;
     }
 
-    // Confirmación antes de canjear
+    setIdRecompensaActual(recompensa.id_recompensa);
+    setPuntosRequeridosActual(recompensa.puntos_requeridos);
+
+    if (recompensa.tipo === 'envio') {
+      // Abrimos modal para pedir dirección
+      setEsEnvio(true);
+      setModalTitle('Dirección de envío');
+      setModalMessage('');
+      setModalType('info');
+      setConfirmarEnvio(false);
+      setModalOpen(true);
+    } else {
+      // Canje instantáneo, solo confirmación
+      setEsEnvio(false);
+      setModalTitle('Confirmar canje');
+      setModalMessage(`¿Quieres canjear esta recompensa por ${recompensa.puntos_requeridos} puntos?`);
+      setModalType('info');
+      setModalOnConfirm(() => async () => {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            setModalTitle('No autenticado');
+            setModalMessage('Debes iniciar sesión para canjear recompensas.');
+            setModalType('error');
+            setModalOnConfirm(null);
+            return;
+          }
+
+          await axios.post(
+            `${API_URL}/api/recompensas/canjear`,
+            { id_recompensa: recompensa.id_recompensa },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+
+          setModalTitle('Canje exitoso');
+          setModalMessage('¡Recompensa canjeada con éxito!');
+          setModalType('success');
+          setModalOnConfirm(null);
+
+          setPuntosUsuario(prev => prev - recompensa.puntos_requeridos);
+        } catch (error) {
+          setModalTitle('Error al canjear');
+          setModalMessage(error.response?.data?.error || 'Ha ocurrido un error al canjear la recompensa.');
+          setModalType('error');
+          setModalOnConfirm(null);
+        }
+      });
+      setModalOpen(true);
+    }
+  };
+
+  const handleEnviarDireccion = () => {
+    const { calle, codigoPostal, ciudad, pais } = direccionEnvio;
+    if (!calle.trim() || !codigoPostal.trim() || !ciudad.trim() || !pais.trim()) {
+      alert('Por favor, completa todos los campos obligatorios: Calle, Código Postal, Ciudad y País.');
+      return;
+    }
+    // Pasamos a confirmación con dirección
+    setConfirmarEnvio(true);
     setModalTitle('Confirmar canje');
-    setModalMessage(`¿Quieres canjear esta recompensa por ${puntos_requeridos} puntos?`);
+    setModalMessage(`¿Quieres canjear esta recompensa por ${puntosRequeridosActual} puntos?`);
     setModalType('info');
     setModalOnConfirm(() => async () => {
       try {
@@ -77,7 +161,7 @@ const Tienda = () => {
 
         await axios.post(
           `${API_URL}/api/recompensas/canjear`,
-          { id_recompensa },
+          { id_recompensa: idRecompensaActual, direccion_envio: direccionEnvio },
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -85,17 +169,35 @@ const Tienda = () => {
         setModalMessage('¡Recompensa canjeada con éxito!');
         setModalType('success');
         setModalOnConfirm(null);
+        setConfirmarEnvio(false);
+        setEsEnvio(false);
 
-        // Actualizar puntos localmente sin recargar
-        setPuntosUsuario(prev => prev - puntos_requeridos);
+        setPuntosUsuario(prev => prev - puntosRequeridosActual);
       } catch (error) {
         setModalTitle('Error al canjear');
         setModalMessage(error.response?.data?.error || 'Ha ocurrido un error al canjear la recompensa.');
         setModalType('error');
         setModalOnConfirm(null);
+        setConfirmarEnvio(false);
+        setEsEnvio(false);
       }
     });
-    setModalOpen(true);
+  };
+
+  // Botón cancelar o cerrar modal resetea todo
+  const handleCancelarModal = () => {
+    setModalOpen(false);
+    setModalOnConfirm(null);
+    setConfirmarEnvio(false);
+    setEsEnvio(false);
+    setDireccionEnvio({
+      calle: '',
+      puerta: '',
+      codigoPostal: '',
+      ciudad: '',
+      provincia: '',
+      pais: ''
+    });
   };
 
   return (
@@ -110,8 +212,8 @@ const Tienda = () => {
             <h3>{recompensa.nombre}</h3>
             <p>{recompensa.descripcion}</p>
             <p>Puntos requeridos: {recompensa.puntos_requeridos}</p>
-            <button 
-              onClick={() => handleCanjear(recompensa.id_recompensa, recompensa.puntos_requeridos)}
+            <button
+              onClick={() => handleCanjear(recompensa)}
               disabled={puntosUsuario < recompensa.puntos_requeridos}
             >
               Canjear
@@ -122,14 +224,59 @@ const Tienda = () => {
 
       <ModalPersonalizado
         isOpen={modalOpen}
-        onClose={handleCloseModal}
+        onClose={handleCancelarModal}
         title={modalTitle}
-        message={modalMessage}
+        message={!esEnvio || confirmarEnvio ? modalMessage : null}
         type={modalType}
-        onConfirm={modalOnConfirm}
-        confirmText="Sí"
-        cancelText="No"
-      />
+        onConfirm={confirmarEnvio ? modalOnConfirm : esEnvio ? handleEnviarDireccion : modalOnConfirm}
+        confirmText={confirmarEnvio ? "Sí" : esEnvio ? "Enviar dirección" : "Sí"}
+        cancelText={confirmarEnvio ? "No" : esEnvio ? "Cancelar" : "No"}
+      >
+        {esEnvio && !confirmarEnvio && (
+          <form className="form-direccion-envio" onSubmit={e => e.preventDefault()}>
+            <input
+              type="text"
+              placeholder="Calle *"
+              value={direccionEnvio.calle}
+              onChange={e => setDireccionEnvio({ ...direccionEnvio, calle: e.target.value })}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Número / Puerta"
+              value={direccionEnvio.puerta}
+              onChange={e => setDireccionEnvio({ ...direccionEnvio, puerta: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Código Postal *"
+              value={direccionEnvio.codigoPostal}
+              onChange={e => setDireccionEnvio({ ...direccionEnvio, codigoPostal: e.target.value })}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Ciudad *"
+              value={direccionEnvio.ciudad}
+              onChange={e => setDireccionEnvio({ ...direccionEnvio, ciudad: e.target.value })}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Provincia"
+              value={direccionEnvio.provincia}
+              onChange={e => setDireccionEnvio({ ...direccionEnvio, provincia: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="País *"
+              value={direccionEnvio.pais}
+              onChange={e => setDireccionEnvio({ ...direccionEnvio, pais: e.target.value })}
+              required
+            />
+          </form>
+        )}
+      </ModalPersonalizado>
     </div>
   );
 };
