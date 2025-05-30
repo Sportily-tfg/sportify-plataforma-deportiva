@@ -19,6 +19,7 @@ const AboutPage = () => {
 
   const blogPosts = [
     {
+      id: "1",
       title: "5 Consejos para Mejorar tu Pádel",
       excerpt: "Descubre técnicas clave para dominar la pista.",
       image: PadelBlog,
@@ -26,6 +27,7 @@ const AboutPage = () => {
       date: "15 Mar 2023"
     },
     {
+      id: "2",
       title: "Beneficios del Yoga para Deportistas",
       excerpt: "Cómo el yoga puede complementar tu entrenamiento.",
       image: YogaBlog,
@@ -33,6 +35,7 @@ const AboutPage = () => {
       date: "22 Feb 2023"
     },
     {
+      id: "3",
       title: "Equipo Esencial para tus Entrenamientos",
       excerpt: "Lo que necesitas para sacar el máximo provecho.",
       image: EquipoBlog,
@@ -114,7 +117,7 @@ const AboutPage = () => {
           <SectionTitle>Nuestro Blog</SectionTitle>
           <BlogGrid>
             {blogPosts.map((post, index) => (
-              <BlogCard key={index} onClick={() => navigate('/blog-detalle')}>
+              <BlogCard key={post.id} onClick={() => navigate(`/blog/${post.id}`)}>
                 <BlogImage src={post.image} alt={post.title} />
                 <BlogContent>
                   <BlogCategory>{post.category}</BlogCategory>
