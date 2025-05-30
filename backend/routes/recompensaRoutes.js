@@ -3,6 +3,15 @@ const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const pool = require('../config/db');
 
+// Middleware para verificar rol admin
+const adminMiddleware = (req, res, next) => {
+  if (req.user && req.user.rol === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ error: 'Acceso denegado' });
+  }
+};
+
 // Obtener todas las recompensas disponibles
 router.get('/', async (req, res) => {
   try {
@@ -14,6 +23,31 @@ router.get('/', async (req, res) => {
     res.json(rows);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener recompensas' });
+  }
+});
+
+// Crear nueva recompensa (solo admin)
+router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
+  const { nombre, descripcion, puntos_requeridos, stock, imagen_url, tipo } = req.body;
+
+  if (!nombre || puntos_requeridos === undefined) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
+  try {
+    const query = `
+      INSERT INTO recompensas (nombre, descripcion, puntos_requeridos, stock, imagen_url, tipo)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+    `;
+    const values = [nombre, descripcion || '', puntos_requeridos, stock || 0, imagen_url || '', tipo || 'instantaneo'];
+
+    const { rows } = await pool.query(query, values);
+
+    res.status(201).json({ message: 'Recompensa creada', recompensa: rows[0] });
+  } catch (error) {
+    console.error('Error creando recompensa:', error);
+    res.status(500).json({ error: 'Error al crear la recompensa' });
   }
 });
 
@@ -95,4 +129,65 @@ router.post('/canjear', authMiddleware, async (req, res) => {
   }
 });
 
+// Editar una recompensa (solo admin)
+router.put('/:id', authMiddleware, adminMiddleware, async (req, res) => {
+  const id = req.params.id;
+  const { nombre, descripcion, puntos_requeridos, stock, imagen_url, tipo } = req.body;
+
+  try {
+    const query = `
+      UPDATE recompensas
+      SET nombre = $1,
+          descripcion = $2,
+          puntos_requeridos = $3,
+          stock = $4,
+          imagen_url = $5,
+          tipo = $6
+      WHERE id_recompensa = $7
+      RETURNING *;
+    `;
+
+    const values = [
+      nombre,
+      descripcion,
+      puntos_requeridos,
+      stock,
+      imagen_url,
+      tipo,
+      id
+    ];
+
+    const { rows } = await pool.query(query, values);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Recompensa no encontrada' });
+    }
+
+    res.json({ message: 'Recompensa actualizada', recompensa: rows[0] });
+
+  } catch (error) {
+    console.error('Error al actualizar la recompensa:', error);
+    res.status(500).json({ error: 'Error al actualizar la recompensa' });
+  }
+});
+
+router.delete('/:id', authMiddleware, adminMiddleware, async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const result = await pool.query(
+      'DELETE FROM recompensas WHERE id_recompensa = $1 RETURNING *',
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Recompensa no encontrada' });
+    }
+
+    res.json({ message: 'Recompensa eliminada correctamente', recompensa: result.rows[0] });
+  } catch (error) {
+    console.error('Error al eliminar recompensa:', error);
+    res.status(500).json({ error: 'Error al eliminar la recompensa' });
+  }
+});
 module.exports = router;

@@ -12,16 +12,19 @@ const app = express();
 // 1. Configuración de CORS (dominios permitidos)
 const allowedOrigins = [
   'https://sportify-plataforma-deportiva-xi.vercel.app', // URL de Vercel
-  'http://localhost:3000',          // Para desarrollo local
+  'http://localhost:3000',   
+  'http://localhost:5000', 
+  'http://localhost:5000/', 
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Origin:", origin); // VER qué origin llega
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error('Bloqueado por CORS'));
+        callback(new Error('Bloqueado por CORS: ' + origin));
       }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],

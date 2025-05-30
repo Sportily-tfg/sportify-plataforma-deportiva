@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import ActivitiesManagement from './ActivitiesManagement';
 import UsersManagement from './UsersManagement';
+import StoreManagement from './StoreManagement';  // Importar nuevo componente
 import '../../styles/AdminPanel.css';
 
 const AdminPanel = () => {
@@ -44,11 +45,19 @@ const AdminPanel = () => {
                     >
                         Gestión de usuarios
                     </button>
+                    <button 
+                        className={`admin-nav-btn ${activeTab === 'store' ? 'active' : ''}`} 
+                        onClick={() => setActiveTab('store')}
+                    >
+                        Tienda
+                    </button>
                 </nav>
             </div>
 
             <div className="admin-content">
-                {activeTab === 'activities' ? <ActivitiesManagement /> : <UsersManagement />}
+                {activeTab === 'activities' && <ActivitiesManagement />}
+                {activeTab === 'users' && <UsersManagement />}
+                {activeTab === 'store' && <StoreManagement />}
             </div>
         </div>
     );
