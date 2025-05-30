@@ -6,7 +6,7 @@ const userRoutes = require('./routes/userRoutes');
 const activityRoutes = require('./routes/activityRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 const contactRoutes = require('./routes/contactRoutes');
-
+const recompensaRoutes = require('./routes/recompensaRoutes');
 const app = express();
 
 // 1. Configuración de CORS (dominios permitidos)
@@ -41,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/reservations', reservationRoutes);
+app.use('/api/recompensas', recompensaRoutes);
 app.use('/api', contactRoutes);
 
 // 4. Rutas de prueba (para verificar que el backend funciona)

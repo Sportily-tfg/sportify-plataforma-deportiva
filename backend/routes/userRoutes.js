@@ -50,9 +50,9 @@ router.put('/mi-cuenta', authMiddleware, async (req, res) => {
 
     valores.push(id_usuario);
 
-    const result = await Usuario.updatebyfields(campos,idx,valores);
+    const result = await Usuario.updatebyfields(campos, idx, valores);
 
-    res.json({ message: 'Datos actualizados correctamente', usuario:nombre});
+    res.json({ message: 'Datos actualizados correctamente', usuario: nombre });
   } catch (err) {
     console.error('Error al actualizar datos:', err);
     res.status(500).json({ error: 'Error del servidor al actualizar usuario' });
@@ -62,7 +62,6 @@ router.put('/mi-cuenta', authMiddleware, async (req, res) => {
 router.delete('/mi-cuenta', authMiddleware, async (req, res) => {
   try {
     const id_usuario = req.user.id;
-    await pool.query('DELETE FROM canjes WHERE id_usuario = $1', [id_usuario]);
     await pool.query('DELETE FROM reservas WHERE id_usuario = $1', [id_usuario]);
     await pool.query('DELETE FROM gamificacion WHERE id_usuario = $1', [id_usuario]);
     await pool.query('DELETE FROM usuarios WHERE id_usuario = $1', [id_usuario]);
@@ -94,7 +93,6 @@ router.put('/cambiar-password', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Contraseña actual incorrecta' });
     }
 
-    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
@@ -116,7 +114,6 @@ router.get('/:id', authMiddleware, async (req, res) => {
       return res.status(403).json({ error: 'No autorizado' });
     }
 
-    // Obtener usuario CON puntos
     const { rows: usuarioRows } = await pool.query(
       `SELECT id_usuario, nombre, email, rol, fecha_registro, puntos 
        FROM usuarios 
@@ -136,18 +133,9 @@ router.get('/:id', authMiddleware, async (req, res) => {
       [req.params.id]
     );
 
-    const recompensas = await pool.query(
-      `SELECT r.nombre_recompensa, c.fecha_canje
-       FROM canjes c
-       JOIN recompensas r ON c.id_recompensa = r.id_recompensa
-       WHERE c.id_usuario = $1`,
-      [req.params.id]
-    );
-
     res.json({
-      usuario: usuarioRows[0], 
-      reservas: reservas.rows,
-      recompensas: recompensas.rows
+      usuario: usuarioRows[0],
+      reservas: reservas.rows
     });
   } catch (error) {
     console.error("Error:", error);

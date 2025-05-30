@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import logo from '../../assets/Logo-Primary-on-Transparent.png';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import logo from "../../assets/Logo-Primary-on-Transparent.png";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 const Navbar = () => {
   const [scroll, setScroll] = useState(false);
@@ -12,7 +12,7 @@ const Navbar = () => {
 
   // Función para actualizar el estado del usuario
   const updateUserState = () => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("user");
     setUser(storedUser ? JSON.parse(storedUser) : null);
   };
 
@@ -26,41 +26,44 @@ const Navbar = () => {
 
     // Escuchar eventos de autenticación
     const handleAuthChange = (e) => {
-      const userData = e?.detail?.user || JSON.parse(localStorage.getItem('user')) || null;
+      const userData =
+        e?.detail?.user || JSON.parse(localStorage.getItem("user")) || null;
       setUser(userData);
     };
 
-    window.addEventListener('authChange', handleAuthChange);
-    window.addEventListener('storage', () => {
+    window.addEventListener("authChange", handleAuthChange);
+    window.addEventListener("storage", () => {
       setTimeout(updateUserState, 100);
     });
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('authChange', handleAuthChange);
-      window.removeEventListener('storage', handleAuthChange);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("authChange", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
     };
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : 'auto';
-    return () => (document.body.style.overflow = 'auto');
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
+    return () => (document.body.style.overflow = "auto");
   }, [isMobileMenuOpen]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.dispatchEvent(new CustomEvent('authChange', { detail: { user: null } }));
-    navigate('/login');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.dispatchEvent(
+      new CustomEvent("authChange", { detail: { user: null } })
+    );
+    navigate("/login");
     setIsMobileMenuOpen(false);
   };
 
   return (
-    <Nav scroll={scroll}>
+    <Nav $scroll={scroll}>
       <LeftSection>
-        <Logo src={logo} alt="Logo Sportify" onClick={() => navigate('/')} />
-        
+        <Logo src={logo} alt="Logo Sportify" onClick={() => navigate("/")} />
+
         {/* Menú de escritorio */}
         <DesktopNavList>
           <NavItem>
@@ -73,6 +76,9 @@ const Navbar = () => {
             <NavLink to="/calendar">Calendario</NavLink>
           </NavItem>
           <NavItem>
+            <NavLink to="/tienda">Tienda</NavLink>
+          </NavItem>
+          <NavItem>
             <NavLink to="/contacto">Contacto</NavLink>
           </NavItem>
         </DesktopNavList>
@@ -80,42 +86,71 @@ const Navbar = () => {
 
       {/* Botón hamburguesa (solo móvil) */}
       <HamburgerButton onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-        {isMobileMenuOpen ? <FaTimes className="icon" /> : <FaBars className="icon" />}
+        {isMobileMenuOpen ? (
+          <FaTimes className="icon" />
+        ) : (
+          <FaBars className="icon" />
+        )}
       </HamburgerButton>
 
       {/* Menú móvil */}
       <MobileMenu $isOpen={isMobileMenuOpen}>
         <MobileNavList>
           <NavItem>
-            <NavLink to="/" onClick={() => setIsMobileMenuOpen(false)}>Inicio</NavLink>
+            <NavLink to="/" onClick={() => setIsMobileMenuOpen(false)}>
+              Inicio
+            </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink to="/actividades" onClick={() => setIsMobileMenuOpen(false)}>Actividades</NavLink>
+            <NavLink
+              to="/actividades"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Actividades
+            </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink to="/calendar" onClick={() => setIsMobileMenuOpen(false)}>Calendario</NavLink>
+            <NavLink to="/calendar" onClick={() => setIsMobileMenuOpen(false)}>
+              Calendario
+            </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink to="/contacto" onClick={() => setIsMobileMenuOpen(false)}>Contacto</NavLink>
+            <NavLink to="/contacto" onClick={() => setIsMobileMenuOpen(false)}>
+              Contacto
+            </NavLink>
           </NavItem>
-          
+
           {user ? (
             <>
               <NavItem>
-                <NavLink to="/usuario" onClick={() => setIsMobileMenuOpen(false)}>Mi perfil</NavLink>
+                <NavLink
+                  to="/usuario"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Mi perfil
+                </NavLink>
               </NavItem>
-              {user.rol === 'admin' && (
+              {user.rol === "admin" && (
                 <NavItem>
-                  <NavLink to="/admin" onClick={() => setIsMobileMenuOpen(false)}>Panel Admin</NavLink>
+                  <NavLink
+                    to="/admin"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Panel Admin
+                  </NavLink>
                 </NavItem>
               )}
               <NavItem>
-                <MobileLogoutButton onClick={handleLogout}>Cerrar sesión</MobileLogoutButton>
+                <MobileLogoutButton onClick={handleLogout}>
+                  Cerrar sesión
+                </MobileLogoutButton>
               </NavItem>
             </>
           ) : (
             <NavItem>
-              <NavLink to="/login" onClick={() => setIsMobileMenuOpen(false)}>Iniciar sesión</NavLink>
+              <NavLink to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                Iniciar sesión
+              </NavLink>
             </NavItem>
           )}
         </MobileNavList>
@@ -127,9 +162,13 @@ const Navbar = () => {
           <UserMenu>
             <UserGreeting>Hola, {user.nombre}</UserGreeting>
             <DropdownMenu>
-              <DropdownItem onClick={() => navigate('/usuario')}>Mi perfil</DropdownItem>
-              {user.rol === 'admin' && (
-                <DropdownItem onClick={() => navigate('/admin')}>Panel Admin</DropdownItem>
+              <DropdownItem onClick={() => navigate("/usuario")}>
+                Mi perfil
+              </DropdownItem>
+              {user.rol === "admin" && (
+                <DropdownItem onClick={() => navigate("/admin")}>
+                  Panel Admin
+                </DropdownItem>
               )}
               <DropdownItem onClick={handleLogout}>Cerrar sesión</DropdownItem>
             </DropdownMenu>
@@ -154,7 +193,7 @@ const Nav = styled.nav`
   left: 0;
   width: 100%;
   z-index: 1000;
-  opacity: ${({ scroll }) => (scroll ? '0.7' : '1')};
+  opacity: ${({ $scroll }) => ($scroll ? "0.7" : "1")};
   transition: opacity 0.3s ease;
   display: flex;
   justify-content: space-between;
@@ -162,6 +201,7 @@ const Nav = styled.nav`
   height: 80px;
   box-sizing: border-box;
 `;
+
 
 const LeftSection = styled.div`
   display: flex;
@@ -212,15 +252,15 @@ const NavItem = styled.li`
 `;
 
 const NavLink = styled(Link)`
-  color: #FAFAFA;
+  color: #fafafa;
   text-decoration: none;
   font-size: 1.1rem;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   transition: color 0.3s ease;
   white-space: nowrap;
 
   &:hover {
-    color: #FF8000;
+    color: #ff8000;
   }
 `;
 
@@ -233,7 +273,7 @@ const UserMenu = styled.div`
 `;
 
 const UserGreeting = styled.span`
-  color: #FAFAFA;
+  color: #fafafa;
   margin-right: 10px;
   font-size: 1.1rem;
 `;
@@ -249,21 +289,21 @@ const DropdownMenu = styled.div`
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   display: none;
   z-index: 1001;
-  
+
   ${UserMenu}:hover & {
     display: block;
   }
 `;
 
 const DropdownItem = styled.div`
-  color: #FAFAFA;
+  color: #fafafa;
   padding: 8px 16px;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #FF8000;
+    background-color: #ff8000;
     color: #212121;
   }
 `;
@@ -275,7 +315,7 @@ const HamburgerButton = styled.button`
   cursor: pointer;
   padding: 10px;
   z-index: 1001;
-  color: #FAFAFA;
+  color: #fafafa;
 
   @media (max-width: 768px) {
     display: block;
@@ -294,7 +334,8 @@ const MobileMenu = styled.div`
   background-color: #212121;
   padding: 0 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  transform: ${({ $isOpen }) => ($isOpen ? 'translateX(0)' : 'translateX(-100%)')};
+  transform: ${({ $isOpen }) =>
+    $isOpen ? "translateX(0)" : "translateX(-100%)"};
   transition: transform 0.3s ease;
   z-index: 999;
   height: calc(100vh - 80px);
@@ -308,13 +349,13 @@ const MobileMenu = styled.div`
 const MobileLogoutButton = styled.button`
   background: none;
   border: none;
-  color: #FAFAFA;
+  color: #fafafa;
   font-size: 1.1rem;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   cursor: pointer;
   padding: 0;
   &:hover {
-    color: #FF8000;
+    color: #ff8000;
   }
 `;
 

@@ -15,6 +15,7 @@ import AdminPanel from "./pages/Admin/AdminPanel";
 import Footer from "./components/Footer";
 import BlogPage from './pages/BlogPage';
 import BlogDetailPage from './pages/BlogDetailPage';
+import Tienda from "./pages/Tienda";
 
 function App() {
   const { loading } = useAuth(); // Ahora useAuth está definido
@@ -83,6 +84,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/tienda"
+              element={
+                <ProtectedRoute>
+                  <Tienda />
+                </ProtectedRoute>
+              }
+              />
 
             <Route
               path="/admin"
