@@ -47,30 +47,24 @@ router.post('/canjear', authMiddleware, async (req, res) => {
         return res.status(400).json({ error: 'Recompensa agotada' });
       }
 
-      // Validar que direccion_envio es objeto y campos obligatorios no vacíos
-      if (
-        !direccion_envio ||
-        typeof direccion_envio !== 'object' ||
-        !direccion_envio.calle?.trim() ||
-        !direccion_envio.codigoPostal?.trim() ||
-        !direccion_envio.ciudad?.trim() ||
-        !direccion_envio.pais?.trim()
+      // Validar datos de dirección obligatorios si es envío
+      if (!direccion_envio ||
+        !direccion_envio.calle ||
+        !direccion_envio.codigoPostal ||
+        !direccion_envio.ciudad ||
+        !direccion_envio.pais
       ) {
-        return res.status(400).json({ error: 'Debe proporcionar una dirección de envío completa (calle, código postal, ciudad, país).' });
+        return res.status(400).json({ error: 'Faltan datos obligatorios de la dirección de envío' });
       }
     }
-    // Si tipo instantaneo no hace falta validar stock ni direccion
 
-    // Iniciar transacción
-    await pool.query('BEGIN');
-
-    // Descontar puntos
+    // Actualizar puntos del usuario
     await pool.query(
       'UPDATE usuarios SET puntos = puntos - $1 WHERE id_usuario = $2',
       [recompensa.puntos_requeridos, id_usuario]
     );
 
-    // Reducir stock solo si es envio
+    // Reducir stock si aplica
     if (recompensa.tipo === 'envio') {
       await pool.query(
         'UPDATE recompensas SET stock = stock - 1 WHERE id_recompensa = $1',
@@ -78,21 +72,26 @@ router.post('/canjear', authMiddleware, async (req, res) => {
       );
     }
 
-    // Guardar la direccion_envio como JSON stringify o null
-    const direccionEnvioString = recompensa.tipo === 'envio' ? JSON.stringify(direccion_envio) : null;
+    // Estado del canje según tipo
+    const estadoCanje = recompensa.tipo === 'instantaneo' ? 'completado' : 'pendiente';
 
-    // Registrar canje, agregamos direccion de envio si existe
+    // Preparar direccion en texto para guardar
+    let direccionEnvioString = null;
+    if (direccion_envio) {
+      direccionEnvioString = `${direccion_envio.calle}${direccion_envio.numero ? ', Nº ' + direccion_envio.numero : ''}, CP ${direccion_envio.codigoPostal}, ${direccion_envio.ciudad}, ${direccion_envio.provincia || ''}, ${direccion_envio.pais}`;
+    }
+
+    // Insertar canje
     await pool.query(
-      'INSERT INTO canjes (id_usuario, id_recompensa, direccion_envio) VALUES ($1, $2, $3)',
-      [id_usuario, id_recompensa, direccionEnvioString]
+      'INSERT INTO canjes (id_usuario, id_recompensa, direccion_envio, estado) VALUES ($1, $2, $3, $4)',
+      [id_usuario, id_recompensa, direccionEnvioString, estadoCanje]
     );
 
-    await pool.query('COMMIT');
-    res.json({ success: true, message: 'Recompensa canjeada' });
+    res.json({ message: 'Canje realizado correctamente' });
+
   } catch (error) {
-    await pool.query('ROLLBACK');
-    console.error('Error en /canjear:', error);
-    res.status(500).json({ error: 'Error al canjear' });
+    console.error(error);
+    res.status(500).json({ error: 'Error al procesar el canje' });
   }
 });
 

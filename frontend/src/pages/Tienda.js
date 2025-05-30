@@ -9,26 +9,26 @@ const Tienda = () => {
   const [recompensas, setRecompensas] = useState([]);
   const [puntosUsuario, setPuntosUsuario] = useState(0);
 
-  // Estados para modal
+  // Modal states
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [modalType, setModalType] = useState('info');
   const [modalOnConfirm, setModalOnConfirm] = useState(null);
 
-  // Estados para canje con envío
+  // Envío states
   const [esEnvio, setEsEnvio] = useState(false);
-  const [direccionEnvio, setDireccionEnvio] = useState({
-    calle: '',
-    puerta: '',
-    codigoPostal: '',
-    ciudad: '',
-    provincia: '',
-    pais: ''
-  });
   const [confirmarEnvio, setConfirmarEnvio] = useState(false);
 
-  // Guarda datos del canje actual para usar en confirmación
+  // Dirección fields
+  const [direccionCalle, setDireccionCalle] = useState('');
+  const [direccionNumero, setDireccionNumero] = useState('');
+  const [direccionCodigoPostal, setDireccionCodigoPostal] = useState('');
+  const [direccionCiudad, setDireccionCiudad] = useState('');
+  const [direccionProvincia, setDireccionProvincia] = useState('');
+  const [direccionPais, setDireccionPais] = useState('');
+
+  // Current reward being redeemed
   const [idRecompensaActual, setIdRecompensaActual] = useState(null);
   const [puntosRequeridosActual, setPuntosRequeridosActual] = useState(0);
 
@@ -62,19 +62,21 @@ const Tienda = () => {
     cargarDatos();
   }, []);
 
+  const resetDireccion = () => {
+    setDireccionCalle('');
+    setDireccionNumero('');
+    setDireccionCodigoPostal('');
+    setDireccionCiudad('');
+    setDireccionProvincia('');
+    setDireccionPais('');
+  };
+
   const handleCloseModal = () => {
     setModalOpen(false);
     setModalOnConfirm(null);
     setConfirmarEnvio(false);
     setEsEnvio(false);
-    setDireccionEnvio({
-      calle: '',
-      puerta: '',
-      codigoPostal: '',
-      ciudad: '',
-      provincia: '',
-      pais: ''
-    });
+    resetDireccion();
   };
 
   const handleCanjear = (recompensa) => {
@@ -90,16 +92,17 @@ const Tienda = () => {
     setPuntosRequeridosActual(recompensa.puntos_requeridos);
 
     if (recompensa.tipo === 'envio') {
-      // Abrimos modal para pedir dirección
       setEsEnvio(true);
+      setConfirmarEnvio(false);
       setModalTitle('Dirección de envío');
       setModalMessage('');
       setModalType('info');
-      setConfirmarEnvio(false);
+      setModalOnConfirm(null);
       setModalOpen(true);
+      resetDireccion();
     } else {
-      // Canje instantáneo, solo confirmación
       setEsEnvio(false);
+      setConfirmarEnvio(false);
       setModalTitle('Confirmar canje');
       setModalMessage(`¿Quieres canjear esta recompensa por ${recompensa.puntos_requeridos} puntos?`);
       setModalType('info');
@@ -138,16 +141,22 @@ const Tienda = () => {
   };
 
   const handleEnviarDireccion = () => {
-    const { calle, codigoPostal, ciudad, pais } = direccionEnvio;
-    if (!calle.trim() || !codigoPostal.trim() || !ciudad.trim() || !pais.trim()) {
+    if (
+      !direccionCalle.trim() ||
+      !direccionCodigoPostal.trim() ||
+      !direccionCiudad.trim() ||
+      !direccionPais.trim()
+    ) {
       alert('Por favor, completa todos los campos obligatorios: Calle, Código Postal, Ciudad y País.');
       return;
     }
-    // Pasamos a confirmación con dirección
+
     setConfirmarEnvio(true);
     setModalTitle('Confirmar canje');
-    setModalMessage(`¿Quieres canjear esta recompensa por ${puntosRequeridosActual} puntos?`);
+    const direccionCompleta = `${direccionCalle.trim()}${direccionNumero ? ', Nº ' + direccionNumero.trim() : ''}, CP ${direccionCodigoPostal.trim()}, ${direccionCiudad.trim()}, ${direccionProvincia.trim()}, ${direccionPais.trim()}`;
+    setModalMessage(`¿Quieres canjear esta recompensa por ${puntosRequeridosActual} puntos enviándola a:\n${direccionCompleta}?`);
     setModalType('info');
+
     setModalOnConfirm(() => async () => {
       try {
         const token = localStorage.getItem('token');
@@ -156,12 +165,23 @@ const Tienda = () => {
           setModalMessage('Debes iniciar sesión para canjear recompensas.');
           setModalType('error');
           setModalOnConfirm(null);
+          setConfirmarEnvio(false);
+          setEsEnvio(false);
           return;
         }
 
+        const direccionObj = {
+          calle: direccionCalle.trim(),
+          numero: direccionNumero.trim(),
+          codigoPostal: direccionCodigoPostal.trim(),
+          ciudad: direccionCiudad.trim(),
+          provincia: direccionProvincia.trim(),
+          pais: direccionPais.trim()
+        };
+
         await axios.post(
           `${API_URL}/api/recompensas/canjear`,
-          { id_recompensa: idRecompensaActual, direccion_envio: direccionEnvio },
+          { id_recompensa: idRecompensaActual, direccion_envio: direccionObj },
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -171,6 +191,7 @@ const Tienda = () => {
         setModalOnConfirm(null);
         setConfirmarEnvio(false);
         setEsEnvio(false);
+        resetDireccion();
 
         setPuntosUsuario(prev => prev - puntosRequeridosActual);
       } catch (error) {
@@ -181,22 +202,6 @@ const Tienda = () => {
         setConfirmarEnvio(false);
         setEsEnvio(false);
       }
-    });
-  };
-
-  // Botón cancelar o cerrar modal resetea todo
-  const handleCancelarModal = () => {
-    setModalOpen(false);
-    setModalOnConfirm(null);
-    setConfirmarEnvio(false);
-    setEsEnvio(false);
-    setDireccionEnvio({
-      calle: '',
-      puerta: '',
-      codigoPostal: '',
-      ciudad: '',
-      provincia: '',
-      pais: ''
     });
   };
 
@@ -224,7 +229,7 @@ const Tienda = () => {
 
       <ModalPersonalizado
         isOpen={modalOpen}
-        onClose={handleCancelarModal}
+        onClose={handleCloseModal}
         title={modalTitle}
         message={!esEnvio || confirmarEnvio ? modalMessage : null}
         type={modalType}
@@ -237,41 +242,41 @@ const Tienda = () => {
             <input
               type="text"
               placeholder="Calle *"
-              value={direccionEnvio.calle}
-              onChange={e => setDireccionEnvio({ ...direccionEnvio, calle: e.target.value })}
+              value={direccionCalle}
+              onChange={e => setDireccionCalle(e.target.value)}
               required
             />
             <input
               type="text"
               placeholder="Número / Puerta"
-              value={direccionEnvio.puerta}
-              onChange={e => setDireccionEnvio({ ...direccionEnvio, puerta: e.target.value })}
+              value={direccionNumero}
+              onChange={e => setDireccionNumero(e.target.value)}
             />
             <input
               type="text"
               placeholder="Código Postal *"
-              value={direccionEnvio.codigoPostal}
-              onChange={e => setDireccionEnvio({ ...direccionEnvio, codigoPostal: e.target.value })}
+              value={direccionCodigoPostal}
+              onChange={e => setDireccionCodigoPostal(e.target.value)}
               required
             />
             <input
               type="text"
               placeholder="Ciudad *"
-              value={direccionEnvio.ciudad}
-              onChange={e => setDireccionEnvio({ ...direccionEnvio, ciudad: e.target.value })}
+              value={direccionCiudad}
+              onChange={e => setDireccionCiudad(e.target.value)}
               required
             />
             <input
               type="text"
               placeholder="Provincia"
-              value={direccionEnvio.provincia}
-              onChange={e => setDireccionEnvio({ ...direccionEnvio, provincia: e.target.value })}
+              value={direccionProvincia}
+              onChange={e => setDireccionProvincia(e.target.value)}
             />
             <input
               type="text"
               placeholder="País *"
-              value={direccionEnvio.pais}
-              onChange={e => setDireccionEnvio({ ...direccionEnvio, pais: e.target.value })}
+              value={direccionPais}
+              onChange={e => setDireccionPais(e.target.value)}
               required
             />
           </form>
